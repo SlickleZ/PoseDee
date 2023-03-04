@@ -7,3 +7,5 @@ The repository for posture detection app "PoseDee"
 [Khetsophon Sukpaiboonwat](https://github.com/rezilz)
 
 [Phutiwat Luekiatpaisan](https://github.com/OUOVerX)
+
+[Kiattikun Nusaree](https://github.com/somebudyst)
