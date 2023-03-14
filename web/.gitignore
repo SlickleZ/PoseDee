@@ -1,4 +1,4 @@
 /node_modules
 /package-lock.json
 
-__pypackages__/
+__pycache__/
