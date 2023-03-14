@@ -1,8 +1,10 @@
+import "../styles/App.css";
 import React from 'react'
 
 function Login() {
   return (
     <div>
+      
       <h1 id="myHeader" class="textcolor" >Posedee</h1>
             <a class="log" href="http://127.0.0.1:5000/Oauth">
                 <button>Login with Google</button>

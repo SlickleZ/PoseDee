@@ -1,31 +1,32 @@
 import React from "react";
 //import ReactDOM from 'react-dom';
 import ReactDOM from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
 import "./index.css";
-import App from "./pages/App";
 import "./styles/App.css";
-import HelloComponent from "./components/HelloComponent";
+import App from "./pages/App";
+//import HelloComponent from "./components/HelloComponent";
 import reportWebVitals from "./reportWebVitals";
 import Login from "./pages/Login";
 import Callback from "./pages/Callback";
 import Home from "./pages/Home"
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Error404 from "./pages/Error404"
 
 //ReactDOM.render(<p>Hello</p> , document.getElementById('root'));
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "*",
     element: 
       <>
-        <HelloComponent/>
-        <p>Heelloo</p>
+        <Error404/>
       </>
   },
   {
     path: "/app", element: <App/>
   },
   {
-    path: "/login", element: <Login/>
+    path: "/" , element: <Home/>
   },
   {
     path: "/callback", element: <Callback/>

@@ -41,24 +41,14 @@ function App() {
 
         <button type="button" onClick={() => {
             RemoveCookie()
-            window.location.href = "/login";
+            window.location.href = "/";
           }} > Logout </button>
       </header>
     </div>);
   }
+  // If condition is null
   else { return(
-    <div className="App">
-    <header className="App-header">
-
-    <p>No user founded</p>
-    <p>Please login</p>
-
-    <button type="button" onClick={() => {
-        RemoveCookie()
-        window.location.href = "/login";
-      }} > Login Page </button>
-  </header>
-</div>   
+        window.location.href = "/"
     );
   }
 }

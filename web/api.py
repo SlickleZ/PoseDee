@@ -13,7 +13,7 @@ app.secret_key = "-.SHEPHERD.-"  #it is necessary to set a password when dealing
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"  #this is to set our environment to https because OAuth 2.0 only supports https environments
 
 GOOGLE_CLIENT_ID = "341516343925-hec8ev3qr9832gpsqct5cu31ganslqf3.apps.googleusercontent.com"  #enter your client id you got from Google console
-client_secrets_file = os.path.join(pathlib.Path(__file__).parent, "Client_secret.json")  #set the path to where the .json file you got Google console is
+client_secrets_file = os.path.join(pathlib.Path(__file__).parent, "client_secret.json")  #set the path to where the .json file you got Google console is
 
 flow = Flow.from_client_secrets_file(  #Flow is OAuth 2.0 a class that stores all the information on how we want to authorize our users
     client_secrets_file=client_secrets_file,
@@ -65,7 +65,7 @@ def callback():
     session["email"] = id_info.get("email")  #defing the results to show on the page
     session["picture"] = id_info.get("picture")
     # เพื่อเปลี่ยนเเปลงค่า proxy ของเว็ปให้เป็นฝั่ง client จาก server
-    return redirect(f"http://localhost:3000/callback?name={session['name']}&email={session['email']}&picture={session['picture']}")  #the final page where the authorized users will end up
+    return redirect(f"http://localhost:3001/callback?name={session['name']}&email={session['email']}&picture={session['picture']}")  #the final page where the authorized users will end up
 
 @app.route("/logout")  #the logout page and function
 def logout():
