@@ -15,7 +15,7 @@ function HomeLogin() {
           {/* Page header */}
           <div className="max-w-3xl mx-auto text-center pb-12 md:pb-10">
             <h1 className="h1 mb-6" data-aos="fade-up" data-aos-delay="250" data-aos-duration="4000">Welcome to <a class="underline decoration-pink-500">PoseDee</a>. <span class="wave">👋</span></h1>
-            <p className="text-xl text-gray-400" data-aos="fade-up" data-aos-delay="400" data-aos-duration="4000">With the busy and often sedentary lifestyle that many of us lead, it's more important than ever to prioritize our posture for our physical health and overall well-being.</p>
+            <p className="text-xl text-gray-600" data-aos="fade-up" data-aos-delay="400" data-aos-duration="4000">With the busy and often sedentary lifestyle that many of us lead, it's more important than ever to prioritize our posture for our physical health and overall well-being.</p>
           </div>
           {/* Login */}
           <div className="max-w-sm mx-auto" data-aos="fade-up" data-aos-delay="500" data-aos-duration="5000">
@@ -30,7 +30,7 @@ function HomeLogin() {
             </a>
             <div className="text-gray-400 text-center mt-6">
               Don’t you have an account? <Link to="https://accounts.google.com/v3/signin/identifier?dsh=S-938716802%3A1678190622213548&continue=https%3A%2F%2Fwww.google.com%3Fhl%3Den-US&ec=GAlA8wE&hl=en&flowName=GlifWebSignIn&flowEntry=AddSession"
-                className="text-blue-600 hover:text-gray-200 transition duration-150 ease-in-out">Sign up</Link>
+                className="text-emerald-600 hover:text-emerald-500 transition duration-150 ease-in-out">Sign up</Link>
             </div>
           </div>
         </div>

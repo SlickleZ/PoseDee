@@ -2,14 +2,24 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import lottie from 'lottie-web';
 import { defineElement } from 'lord-icon-element';
+import {useScrollPosition} from '../hooks/useScrollPosition';
 
 // define "lord-icon" custom element with default properties
 defineElement(lottie.loadAnimation);
+
+// scroll direction hook
+
+
+// header component
+
 
 function HomeNavBar() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const trigger = useRef(null);
   const mobileNav = useRef(null);
+  const scrollPosition = useScrollPosition();
+ 
+
 
   // close the mobile menu on click outside
   useEffect(() => {
@@ -33,8 +43,10 @@ function HomeNavBar() {
   });
 
   return (
+    
     <header className="absolute w-full z-30 py-4">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 rounded-lg backdrop-blur-lg shadow-lg">
+
+      <div className=" mx-auto px-4 sm:px-6 rounded-lg backdrop-blur-lg shadow-lg fixed w-full top-0">
         <div className="flex items-center justify-between h-20 ">
 
           {/* Site branding */}
@@ -54,10 +66,10 @@ function HomeNavBar() {
             {/* Desktop sign in links */}
             <ul className="flex grow justify-end flex-wrap items-center">
               <li>
-                <Link to="/signin" className="font-medium text-purple-600 hover:text-gray-200 px-4 py-3 flex items-center transition duration-150 ease-in-out">Sign in</Link>
+                <Link to="/signin" className="font-medium text-emerald-600 hover:text-emerald-300 px-4 py-3 flex items-center transition duration-150 ease-in-out">Sign in</Link>
               </li>
               <li>
-                <Link to="/signup" className="btn-sm text-white bg-purple-600 hover:bg-purple-700 ml-3">Sign up</Link>
+                <Link to="/signup" className="btn-sm text-white bg-emerald-600 hover:bg-emerald-300 ml-3">Sign up</Link>
               </li>
             </ul>
 

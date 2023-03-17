@@ -11,7 +11,7 @@ function Home() {
     <div className="flex flex-col min-h-screen overflow-hidden">
 
       {/*  Site header */}
-      <HomeNavBar />
+     <HomeNavBar />
       {/*  Page content */}
       <main className="grow">
         {/*  Page illustration */}

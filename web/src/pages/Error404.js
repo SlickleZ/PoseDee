@@ -17,8 +17,8 @@ function Error404() {
                         <div class=" text-center">
                             <h1 class="my-2 text-gray-800 font-bold text-3xl">
                             Page not found.</h1>
-                            <p class="my-8 text-gray-800">The Requested <a class="text-purple-600">{url}</a> was not found. <br></br>Sorry about that! Please visit our hompage to get where you need to go.</p>
-                            <Link to="/" className="sm:w-full lg:w-auto my-2 border rounded md py-4 px-8 border-transparent px-4 py-2 my-2 rounded-sm text-white bg-purple-600 hover:bg-purple-700 focus:ring-opacity-50">Take me to homepage!</Link>
+                            <p class="my-8 text-gray-800">The Requested <a class="text-emerald-600">{url}</a> was not found. <br></br>Sorry about that! Please visit our hompage to get where you need to go.</p>
+                            <Link to="/" className="sm:w-full lg:w-auto my-2 border rounded md py-4 px-8 border-transparent px-4 py-2 my-2 rounded-sm text-white bg-emerald-600 hover:bg-emerald-400 transition duration-150 ease-in-out">Take me to homepage!</Link>
                         </div>
                     </div>
                     <img src="https://i.ibb.co/G9DC8S0/404-2.png"/>
