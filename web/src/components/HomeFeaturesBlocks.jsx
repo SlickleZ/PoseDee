@@ -1,8 +1,14 @@
 import React from 'react';
+import HeroImage from '../styles/posedee-feature-image1.gif';
 
-function FeaturesBlocks() {
+function HomeFeaturesBlocks() {
   return (
     <section>
+      {/* Hero image */}
+      <div data-aos="fade-up" data-aos-delay="600" data-aos-duration="5000">
+            <img className="mx-auto" src={HeroImage} width="1024" height="504" alt="Hero" />
+      </div> 
+
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="py-12 md:py-20">
 
@@ -100,4 +106,4 @@ function FeaturesBlocks() {
   );
 }
   
-export default FeaturesBlocks;
+export default HomeFeaturesBlocks;

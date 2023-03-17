@@ -6,9 +6,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 import "./styles/App.css";
 import App from "./pages/App";
-//import HelloComponent from "./components/HelloComponent";
 import reportWebVitals from "./reportWebVitals";
-import Login from "./pages/Login";
+
 import Callback from "./pages/Callback";
 import Home from "./pages/Home"
 import Error404 from "./pages/Error404"
@@ -23,16 +22,13 @@ const router = createBrowserRouter([
       </>
   },
   {
-    path: "/app", element: <App/>
-  },
-  {
     path: "/" , element: <Home/>
   },
   {
-    path: "/callback", element: <Callback/>
+    path: "/app", element: <App/>
   },
   {
-    path: "/home", element: <Home/>
+    path: "/callback", element: <Callback/>
   },
 ]);
 

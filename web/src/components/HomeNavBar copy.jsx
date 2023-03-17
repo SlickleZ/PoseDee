@@ -6,10 +6,8 @@ import { defineElement } from 'lord-icon-element';
 // define "lord-icon" custom element with default properties
 defineElement(lottie.loadAnimation);
 
-function Header() {
-
+function HomeNavBar() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-
   const trigger = useRef(null);
   const mobileNav = useRef(null);
 
@@ -35,9 +33,9 @@ function Header() {
   });
 
   return (
-    <header className="absolute w-full z-30 py-4 ">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 backdrop-blur-md shadow-md fixed top-0 left-0 right-0">
-        <div className="flex items-center justify-between h-20">
+    <header className="absolute w-full z-30 py-4">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 rounded-lg backdrop-blur-lg shadow-lg">
+        <div className="flex items-center justify-between h-20 ">
 
           {/* Site branding */}
           <div className="shrink-0 mr-4">
@@ -98,4 +96,4 @@ function Header() {
   );
 }
 
-export default Header;
+export default HomeNavBar;
