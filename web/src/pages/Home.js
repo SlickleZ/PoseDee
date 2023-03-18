@@ -5,13 +5,11 @@ import HomeLogin from "../components/HomeLogin";
 import PageIllustration from "../components/PageIllustration";
 import HomeFeaturesBlocks from "../components/HomeFeaturesBlocks";
 import HomeNavBar from "../components/HomeNavBar";
-import ScrollToTop from "../components/ScrollToTop";
 
 function Home() {
   return (
     <div className="flex flex-col min-h-screen overflow-hidden">
       {/*  Site header */}
-      <ScrollToTop />
       <HomeNavBar />
 
       {/*  Page content */}

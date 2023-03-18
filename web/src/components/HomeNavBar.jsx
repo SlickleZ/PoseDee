@@ -11,6 +11,7 @@ function HomeNavBar() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const trigger = useRef(null);
   const mobileNav = useRef(null);
+
   // get scroll position
   const [scrollPosition, setScrollPosition] = useState(0);
 
@@ -20,7 +21,6 @@ function HomeNavBar() {
     };
 
     window.addEventListener('scroll', updatePosition);
-
     updatePosition();
 
     return () => window.removeEventListener('scroll', updatePosition);
@@ -54,12 +54,14 @@ function HomeNavBar() {
     document.addEventListener('keydown', keyHandler);
     return () => document.removeEventListener('keydown', keyHandler);
   });
+
+  // join string for class conditions
   function classNames(...classes) {
     return classes.filter(Boolean).join(' '); }
 
   return (
     <header className="absolute w-full z-30 py-4">
-      <div className={classNames(scrollPosition > 0 ? 'shadow-lg' : 'shadow-none', 'transition-shadow mx-auto px-4 sm:px-6 rounded-lg backdrop-blur-lg fixed w-full top-0')}>
+      <div className={classNames(scrollPosition > 0 ? 'backdrop-blur-lg shadow-lg' : 'shadow-none', 'transition-shadow mx-auto px-4 sm:px-6 rounded-lg fixed w-full top-0')}>
         <div className="flex items-center justify-between h-20 ">
 
           {/* Site branding */}
@@ -77,7 +79,7 @@ function HomeNavBar() {
           <nav className="hidden md:flex md:grow">
 
             {/* Desktop sign in links */}
-            <ul className="flex grow justify-end flex-wrap items-center">
+            {/* <ul className="flex grow justify-end flex-wrap items-center">
               <li>
                 <Link to="/signin" className="font-medium text-emerald-600 hover:text-emerald-300 px-4 py-3 flex 
                 items-center transition duration-150 ease-in-out">Features</Link>
@@ -86,10 +88,10 @@ function HomeNavBar() {
                 <Link to="/signin" className="font-medium text-emerald-600 hover:text-emerald-300 px-4 py-3 flex 
                 items-center transition duration-150 ease-in-out">Features</Link>
               </li>
-              {/* <li>
+              <li>
                 <Link to="/signup" className="btn-sm text-white bg-emerald-600 hover:bg-emerald-300 ml-3">Tutorials</Link>
-              </li> */}
-            </ul>
+              </li>
+            </ul> */}
 
           </nav>
 
