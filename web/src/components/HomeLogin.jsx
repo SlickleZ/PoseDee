@@ -1,4 +1,5 @@
 import React from 'react'
+import {useRef} from 'react'
 import { Link } from 'react-router-dom';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
@@ -7,9 +8,10 @@ AOS.init();
 
 
 function HomeLogin() {
+  const homelogin = useRef(null);
   return (
     <section className="relative">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+      <div ref={homelogin} className="homelogin max-w-6xl mx-auto px-4 sm:px-6">
         <div className="pt-32 pb-12 md:pt-40 md:pb-15">
 
           {/* Page header */}

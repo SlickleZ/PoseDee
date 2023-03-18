@@ -11,7 +11,29 @@ function HomeNavBar() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const trigger = useRef(null);
   const mobileNav = useRef(null);
- 
+  // get scroll position
+  const [scrollPosition, setScrollPosition] = useState(0);
+
+  useEffect(() => {
+    const updatePosition = () => {
+      setScrollPosition(window.pageYOffset);
+    };
+
+    window.addEventListener('scroll', updatePosition);
+
+    updatePosition();
+
+    return () => window.removeEventListener('scroll', updatePosition);
+  }, []);
+
+    //scroll page
+    const scrollTop = () => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    };
+
   // close the mobile menu on click outside
   useEffect(() => {
     const clickHandler = ({ target }) => {
@@ -32,16 +54,18 @@ function HomeNavBar() {
     document.addEventListener('keydown', keyHandler);
     return () => document.removeEventListener('keydown', keyHandler);
   });
+  function classNames(...classes) {
+    return classes.filter(Boolean).join(' '); }
 
   return (
     <header className="absolute w-full z-30 py-4">
-      <div className=" mx-auto px-4 sm:px-6 rounded-lg backdrop-blur-lg shadow-lg fixed w-full top-0">
+      <div className={classNames(scrollPosition > 0 ? 'shadow-lg' : 'shadow-none', 'transition-shadow mx-auto px-4 sm:px-6 rounded-lg backdrop-blur-lg fixed w-full top-0')}>
         <div className="flex items-center justify-between h-20 ">
 
           {/* Site branding */}
           <div className="shrink-0 mr-4">
             {/* Logo */}
-            <Link to="/" className="block" aria-label="Cruip">
+            <Link onClick={scrollTop} className="block" aria-label="Cruip">
               <lord-icon src="https://cdn.lordicon.com/tkuydciy.json"
               trigger="hover" colors="primary:#121331,secondary:#ffffff,tertiary:#ffc738"
               style={{width:'60px', height:'60px'}}>
@@ -55,11 +79,16 @@ function HomeNavBar() {
             {/* Desktop sign in links */}
             <ul className="flex grow justify-end flex-wrap items-center">
               <li>
-                <Link to="/signin" className="font-medium text-emerald-600 hover:text-emerald-300 px-4 py-3 flex items-center transition duration-150 ease-in-out">Sign in</Link>
+                <Link to="/signin" className="font-medium text-emerald-600 hover:text-emerald-300 px-4 py-3 flex 
+                items-center transition duration-150 ease-in-out">Features</Link>
               </li>
               <li>
-                <Link to="/signup" className="btn-sm text-white bg-emerald-600 hover:bg-emerald-300 ml-3">Sign up</Link>
+                <Link to="/signin" className="font-medium text-emerald-600 hover:text-emerald-300 px-4 py-3 flex 
+                items-center transition duration-150 ease-in-out">Features</Link>
               </li>
+              {/* <li>
+                <Link to="/signup" className="btn-sm text-white bg-emerald-600 hover:bg-emerald-300 ml-3">Tutorials</Link>
+              </li> */}
             </ul>
 
           </nav>
