@@ -2,25 +2,16 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import lottie from 'lottie-web';
 import { defineElement } from 'lord-icon-element';
-import {useScrollPosition} from '../hooks/useScrollPosition';
 
 // define "lord-icon" custom element with default properties
 defineElement(lottie.loadAnimation);
 
-// scroll direction hook
-
-
 // header component
-
-
 function HomeNavBar() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const trigger = useRef(null);
   const mobileNav = useRef(null);
-  const scrollPosition = useScrollPosition();
  
-
-
   // close the mobile menu on click outside
   useEffect(() => {
     const clickHandler = ({ target }) => {
@@ -43,9 +34,7 @@ function HomeNavBar() {
   });
 
   return (
-    
     <header className="absolute w-full z-30 py-4">
-
       <div className=" mx-auto px-4 sm:px-6 rounded-lg backdrop-blur-lg shadow-lg fixed w-full top-0">
         <div className="flex items-center justify-between h-20 ">
 

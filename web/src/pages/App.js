@@ -32,7 +32,7 @@ function App() {
 
         {
           userinfo && <>
-            <img src={JSON.parse(userinfo).picture}/>
+            <img src={JSON.parse(userinfo).picture} />
             <p>Name: {JSON.parse(userinfo).name}</p>
             <p>Email: {JSON.parse(userinfo).email}</p>
           </>
