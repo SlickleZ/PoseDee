@@ -1,20 +1,24 @@
-import { Fragment } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import useCookie, { setCookie } from "react-use-cookie";
 import lottie from "lottie-web";
 import { defineElement } from "lord-icon-element";
+import { Link } from 'react-router-dom';
+
 
 // define "lord-icon" custom element with default properties
 defineElement(lottie.loadAnimation);
 
 //remove cookies
-const isObjectEmpty = (objectName) => {
-  return Object.keys(objectName).length === 0;
-};
+// const isObjectEmpty = (objectName) => {
+//   return Object.keys(objectName).length === 0;
+// };
 
 export default function AppNavBar() {
+
   const [userinfo, setUserInfo] = useCookie("userinfo", "");
+
   const RemoveCookie = (locale) => {
     setCookie("userinfo", locale, {
       days: 0,
@@ -22,12 +26,12 @@ export default function AppNavBar() {
   };
 
   const navigation = [
-    { name: "Dashboard", href: "#", current: true },
-    { name: "Team", href: "/home", current: false },
-    { name: "Projects", href: "#", current: false },
-    { name: "Calendar", href: "#", current: false },
-    { name: "Reports", href: "#", current: false },
+    { name: "Posture Overviews", href: "/app", current: true },
+    { name: "Tracking System", href: "app/camera", current: false },
+    { name: "FAQ", href: "app/faq", current: false },
+    { name: "Our Approach", href: "https://github.com/SlickleZ/PoseDee", current: false },
   ];
+
   const userNavigation = [{ name: "Sign out", href: "#" }];
 
   function classNames(...classes) {
@@ -36,28 +40,31 @@ export default function AppNavBar() {
 
   return (
     <>
-      {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full bg-gray-100">
-        <body class="h-full">
-        ```
-      */}
       <div className="min-h-full">
         <Disclosure as="nav" className="bg-gray-800">
           {({ open }) => (
             <>
               <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div className="flex h-16 items-center justify-between">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <lord-icon
+                <div className="flex h-15 items-center justify-between">
+                  {/* <div className="flex items-center"> */}
+                    <div className="py-1 flex-shrink-0 items-center">
+
+                      {/* <lord-icon
                         src="https://cdn.lordicon.com/tkuydciy.json"
                         trigger="hover"
                         colors="primary:#121331,secondary:#ffffff,tertiary:#ffc738"
                         style={{ width: "60px", height: "60px" }}
-                      ></lord-icon>
+                      ></lord-icon> */}
+
+                      <Link to="/app2">
+                        <lord-icon
+                          src="https://cdn.lordicon.com/zlyxhzar.json"
+                          trigger="loop-on-hover"
+                          colors="primary:#ffffff"
+                          //scale="59"
+                          style={{ width: "35px", height: "35px"}}>
+                        </lord-icon>
+                      </Link>
                     </div>
                     <div className="hidden md:block">
                       <div className="ml-10 flex items-baseline space-x-4">
@@ -68,7 +75,7 @@ export default function AppNavBar() {
                             className={classNames(
                               item.current
                                 ? "bg-gray-900 text-white"
-                                : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                                : "text-gray-300 transition ease-in-out delay-90 hover:-translate-y-1 hover:scale-100 duration-100 hover:bg-gray-700 hover:text-white",
                               "rounded-md px-3 py-2 text-sm font-medium"
                             )}
                             aria-current={item.current ? "page" : undefined}
@@ -78,9 +85,11 @@ export default function AppNavBar() {
                         ))}
                       </div>
                     </div>
-                  </div>
+                  {/* </div> */}
                   <div className="hidden md:block">
                     <div className="ml-4 flex items-center md:ml-6">
+
+                      {/* Bell Button */}
                       <button
                         type="button"
                         className="rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white hover:outline-none hover:ring-2 hover:ring-white hover:ring-offset-2 hover:ring-offset-gray-800
@@ -117,7 +126,7 @@ export default function AppNavBar() {
                           leaveFrom="transform opacity-100 scale-100"
                           leaveTo="transform opacity-0 scale-95"
                         >
-                          <Menu.Items className="absolute right-0 z-10 mt-2 w-50 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                          <Menu.Items className="absolute right-0 z-10 mt-2 w-fit origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                             <div class="px-4 py-2 text-right text-sm text-gray-900 ">
                               <div>Hi, {JSON.parse(userinfo).name} 😄</div>
                               <div class="font-medium truncate">

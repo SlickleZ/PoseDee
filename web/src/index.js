@@ -15,11 +15,10 @@ import Error404 from "./pages/Error404"
 //ReactDOM.render(<p>Hello</p> , document.getElementById('root'));
 const router = createBrowserRouter([
   {
-    path: "*",
-    element: 
-      <>
-        <Error404/>
-      </>
+    path: "*", element: <Error404/>
+      // <>
+      //   <Error404/>
+      // </>
   },
   {
     path: "/" , element: <Home/>

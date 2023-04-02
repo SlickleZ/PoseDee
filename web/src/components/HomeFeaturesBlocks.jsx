@@ -15,7 +15,6 @@ function HomeFeaturesBlocks() {
           {/* Section header */}
           <div className="max-w-3xl mx-auto text-center pb-12 ">
             <h2 className="h2 mb-4">Features</h2>
-            <p className="text-xl text-gray-500 mb-6 italic underline">"The daisy flower represents growth and renewal, which aligns well with a posture tracking app that aims to help users make positive changes in their posture habits."</p>
             <p className="text-xl text-gray-600">We understand the importance of good posture and have made it our mission to provide our users with the best possible tools and resources to achieve it. Here are some possible features for your posture tracking web-app with some details:</p>
           </div>
 

@@ -1,5 +1,4 @@
 import React from 'react'
-import Header from '../components/HomeNavBar';
 import { Link } from 'react-router-dom';
 
 function getCurrentURL () {

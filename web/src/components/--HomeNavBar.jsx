@@ -68,8 +68,10 @@ function HomeNavBar() {
           <div className="shrink-0 mr-4">
             {/* Logo */}
             <Link onClick={scrollTop} className="block" aria-label="Cruip">
-              <lord-icon src="https://cdn.lordicon.com/tkuydciy.json"
-              trigger="hover" colors="primary:#121331,secondary:#ffffff,tertiary:#ffc738"
+              <lord-icon 
+              // src="https://cdn.lordicon.com/tkuydciy.json"
+              // trigger="hover" colors="primary:#121331,secondary:#ffffff,tertiary:#ffc738"
+
               style={{width:'60px', height:'60px'}}>
               </lord-icon>
             </Link>

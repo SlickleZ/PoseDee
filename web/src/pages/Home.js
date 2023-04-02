@@ -4,14 +4,14 @@ import { Link } from "react-router-dom";
 import HomeLogin from "../components/HomeLogin";
 import PageIllustration from "../components/PageIllustration";
 import HomeFeaturesBlocks from "../components/HomeFeaturesBlocks";
-import HomeNavBar from "../components/HomeNavBar";
+import ScrollToTopComp from "../components/ScrollToTopComp";
 
 function Home() {
   return (
     <div className="flex flex-col min-h-screen overflow-hidden">
       {/*  Site header */}
-      <HomeNavBar />
-
+      {/* <HomeNavBar /> */}
+      <ScrollToTopComp />
       {/*  Page content */}
       <main className="grow">
         {/*  Page illustration */}
