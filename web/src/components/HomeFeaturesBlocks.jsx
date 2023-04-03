@@ -5,7 +5,7 @@ function HomeFeaturesBlocks() {
   return (
     <section>
       {/* Hero image */}
-      <div data-aos="fade-up" data-aos-delay="600" data-aos-duration="5000">
+      <div data-aos="fade-up" data-aos-delay="400" data-aos-duration="900">
             <img className="mx-auto" src={HeroImage} width="1024" height="504" alt="Hero" />
       </div> 
 

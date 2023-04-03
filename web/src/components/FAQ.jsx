@@ -3,13 +3,13 @@ import React from 'react'
 function FAQ() {
   return (
     <div>
-      <div class="p-8">
-            <div class="bg-white p-4 rounded-lg shadow-xl mt-12">
+      <div class="p-6">
+            <div class="bg-white p-5 rounded-lg shadow-xl mt-12" data-aos="fade-up" data-aos-delay="200" data-aos-duration="300">
               <h4 class="text-4xl font-bold text-gray-800 tracking-widest uppercase text-center">
                 FAQ
               </h4>
               <p class="text-center text-gray-600 text-sm mt-2">
-                Here are some of the frequently asked questions
+                Here are some of the frequently asked questions that devs think you should have :)
               </p>
               <div class="space-y-12 px-2 xl:px-16 mt-12">
                 <div class="mt-4 flex">

@@ -27,6 +27,7 @@ export default function AppNavBar() {
   const [userinfo, setUserInfo] = useCookie("userinfo", "");
 
   const RemoveCookie = (locale) => {
+    window.localStorage.clear();
     setCookie("userinfo", locale, {
       days: 0,
     });
@@ -72,7 +73,7 @@ export default function AppNavBar() {
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
   }
-  console.log(navigation);
+  // console.log(navigation);
 
   return (
     <>
@@ -92,7 +93,7 @@ export default function AppNavBar() {
                         style={{ width: "60px", height: "60px" }}
                       ></lord-icon> */}
 
-                      <Link to="/app2">
+                      <Link to="/app2" onClick={() => handleClick(0)}>
                         <lord-icon
                           src="https://cdn.lordicon.com/zlyxhzar.json"
                           trigger="loop-on-hover"

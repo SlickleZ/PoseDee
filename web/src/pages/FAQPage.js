@@ -36,7 +36,7 @@ function FAQPage() {
           {/* เเปลงจาก Json จาก userinfo เป็น name */}
           {/* {userinfo && JSON.parse(userinfo).name} */}
 
-          <p>The current time is {currentTime}.</p>
+          {/* <p>The current time is {currentTime}.</p> */}
         </header>
       </div>
     );

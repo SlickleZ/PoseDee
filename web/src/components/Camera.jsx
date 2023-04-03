@@ -1,32 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react'
+import "../styles/App.css";
+import HeroImage from '../styles/posedee-feature-image1.gif';
 
 function Camera() {
-    // const [src, setSrc] = useState('');
+    return (
+        <div className = "App">
+            <div className="py-10" data-aos="fade-up" data-aos-delay="200" data-aos-duration="300">
+                <img className="mx-auto" src={HeroImage} width="1024" height="504" alt="Hero" />
+            </div>
 
-    // useEffect(() => {
-    //   const interval = setInterval(() => {
-    //     fetch('/camera_feed')
-    //       .then(response => {
-    //         if (!response.ok) {
-    //           throw new Error('Network response was not ok');
-    //         }
-    //         return response.blob();
-    //       })
-    //       .then(blob => {
-    //         const url = URL.createObjectURL(blob);
-    //         setSrc(url);
-    //       })
-    //       .catch(error => {
-    //         console.error('Error:', error);
-    //       });
-    //   }, 1000);
-  
-    //   return () => clearInterval(interval);
-    // }, []);
-  
-    // return (
-    //   <img src={src} alt="Camera Feed" />
-    // );
+        </div>
+        
+    )
 }
 
 export default Camera
