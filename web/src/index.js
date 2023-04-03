@@ -9,8 +9,10 @@ import App from "./pages/App";
 import reportWebVitals from "./reportWebVitals";
 
 import Callback from "./pages/Callback";
-import Home from "./pages/Home"
+import HomePage from "./pages/HomePage"
 import Error404 from "./pages/Error404"
+import CameraPage from "./pages/CameraPage";
+import FAQPage from "./pages/FAQPage";
 
 //ReactDOM.render(<p>Hello</p> , document.getElementById('root'));
 const router = createBrowserRouter([
@@ -21,13 +23,19 @@ const router = createBrowserRouter([
       // </>
   },
   {
-    path: "/" , element: <Home/>
+    path: "/" , element: <HomePage/>
   },
   {
     path: "/app", element: <App/>
   },
   {
     path: "/callback", element: <Callback/>
+  },
+  {
+    path: "/track", element: <CameraPage/>
+  },
+  {
+    path: "/faq", element: <FAQPage/>
   },
 ]);
 

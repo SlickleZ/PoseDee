@@ -6,7 +6,7 @@ import PageIllustration from "../components/PageIllustration";
 import HomeFeaturesBlocks from "../components/HomeFeaturesBlocks";
 import ScrollToTopComp from "../components/ScrollToTopComp";
 
-function Home() {
+function HomePage() {
   return (
     <div className="flex flex-col min-h-screen overflow-hidden">
       {/*  Site header */}
@@ -28,4 +28,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default HomePage;

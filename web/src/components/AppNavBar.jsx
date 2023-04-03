@@ -15,6 +15,13 @@ defineElement(lottie.loadAnimation);
 //   return Object.keys(objectName).length === 0;
 // };
 
+// export const navigation = [
+//   { name: "Posture Overviews", href: "/app", current: false },
+//   { name: "Tracking System", href: "/track", current: false },
+//   { name: "FAQ", href: "/faq", current: false },
+//   { name: "Our Approach", href: "https://github.com/SlickleZ/PoseDee", current: false },
+// ];
+
 export default function AppNavBar() {
 
   const [userinfo, setUserInfo] = useCookie("userinfo", "");
@@ -25,18 +32,44 @@ export default function AppNavBar() {
     });
   };
 
-  const navigation = [
-    { name: "Posture Overviews", href: "/app", current: true },
-    { name: "Tracking System", href: "app/camera", current: false },
-    { name: "FAQ", href: "app/faq", current: false },
-    { name: "Our Approach", href: "https://github.com/SlickleZ/PoseDee", current: false },
-  ];
+    // const [navigation, setNavigation] = useState([
+    //   { name: "Posture Overviews", href: "/app", current: false },
+    //   { name: "Tracking System", href: "/track", current: false },
+    //   { name: "FAQ", href: "/faq", current: false },
+    //   { name: "Our Approach", href: "https://github.com/SlickleZ/PoseDee", current: false },
+    // ]);
+
+    const initialState = [
+      { name: "Posture Overviews", href: "/app", current: true },
+      { name: "Tracking System", href: "/track", current: false },
+      { name: "FAQ", href: "/faq", current: false },
+      { name: "Our Approach", href: "https://github.com/SlickleZ/PoseDee", current: false },
+    ];
+  
+    const [navigation, setNavigation] = useState(() => {
+      const storedNavigation = localStorage.getItem("navigation");
+      return storedNavigation ? JSON.parse(storedNavigation) : initialState;
+    });
+  
+    useEffect(() => {
+      localStorage.setItem("navigation", JSON.stringify(navigation));
+    }, [navigation]);
+  
+    const handleClick = (index) => {
+      setNavigation((prevState) =>
+        prevState.map((item, i) =>
+          i === index ? { ...item, current: true } : { ...item, current: false }
+        )
+      );
+    };
 
   const userNavigation = [{ name: "Sign out", href: "#" }];
 
+  
   function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
   }
+  console.log(navigation);
 
   return (
     <>
@@ -68,10 +101,11 @@ export default function AppNavBar() {
                     </div>
                     <div className="hidden md:block">
                       <div className="ml-10 flex items-baseline space-x-4">
-                        {navigation.map((item) => (
+                        {navigation.map((item,index) => (
                           <a
                             key={item.name}
                             href={item.href}
+                            onClick={() => handleClick(index)}
                             className={classNames(
                               item.current
                                 ? "bg-gray-900 text-white"
@@ -79,6 +113,8 @@ export default function AppNavBar() {
                               "rounded-md px-3 py-2 text-sm font-medium"
                             )}
                             aria-current={item.current ? "page" : undefined}
+                            //Onclick....
+                            
                           >
                             {item.name}
                           </a>

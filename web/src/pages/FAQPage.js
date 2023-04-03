@@ -11,12 +11,8 @@ const isObjectEmpty = (objectName) => {
   return Object.keys(objectName).length === 0;
 };
 
-// const updatedNavigation = [...navigation];
-// updatedNavigation[0].current = true;
-// updatedNavigation[1].current = false;
-// updatedNavigation[2].current = false;
 
-function App() {
+function FAQPage() {
   const [currentTime, setCurrentTime] = useState(0);
   const [userinfo, setUserInfo] = useCookie("userinfo", "");
 
@@ -32,10 +28,10 @@ function App() {
   if (!isObjectEmpty(userinfo)) {
     return (
       <div className="App">
-        <AppNavBar />
+        <AppNavBar/>
         <ScrollToTopComp />
         <AlertComp />
-        {/* <Camera /> */}
+        <FAQ />
         <header className="App-header">
           {/* เเปลงจาก Json จาก userinfo เป็น name */}
           {/* {userinfo && JSON.parse(userinfo).name} */}
@@ -51,4 +47,4 @@ function App() {
   }
 }
 
-export default App;
+export default FAQPage;
