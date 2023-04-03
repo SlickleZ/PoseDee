@@ -56,6 +56,9 @@ export default function AppNavBar() {
     }, [navigation]);
   
     const handleClick = (index) => {
+      if (index === 3) {
+        return; // do nothing if index 3 is clicked
+      }
       setNavigation((prevState) =>
         prevState.map((item, i) =>
           i === index ? { ...item, current: true } : { ...item, current: false }
