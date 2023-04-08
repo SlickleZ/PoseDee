@@ -84,6 +84,8 @@ export default function AppNavBar() {
               <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="flex h-15 items-center justify-between">
                   {/* <div className="flex items-center"> */}
+                  {/* Have to click multiple times to change current values --fixed*/}
+                  <Link onClick={() => {handleClick(0); window.location.href="/app";}}>
                     <div className="py-1 flex-shrink-0 items-center">
 
                       {/* <lord-icon
@@ -92,8 +94,6 @@ export default function AppNavBar() {
                         colors="primary:#121331,secondary:#ffffff,tertiary:#ffc738"
                         style={{ width: "60px", height: "60px" }}
                       ></lord-icon> */}
-
-                      <Link to="/app2" onClick={() => handleClick(0)}>
                         <lord-icon
                           src="https://cdn.lordicon.com/zlyxhzar.json"
                           trigger="loop-on-hover"
@@ -101,8 +101,8 @@ export default function AppNavBar() {
                           //scale="59"
                           style={{ width: "35px", height: "35px"}}>
                         </lord-icon>
-                      </Link>
                     </div>
+                    </Link>
                     <div className="hidden md:block">
                       <div className="ml-10 flex items-baseline space-x-4">
                         {navigation.map((item,index) => (
@@ -113,7 +113,7 @@ export default function AppNavBar() {
                             className={classNames(
                               item.current
                                 ? "bg-gray-900 text-white"
-                                : "text-gray-300 transition ease-in-out delay-90 hover:-translate-y-1 hover:scale-100 duration-100 hover:bg-gray-700 hover:text-white",
+                                : "text-gray-300 transition ease-in-out delay-90 hover:-translate-y-1 hover:scale-100 duration-250 hover:bg-gray-700 hover:text-white",
                               "rounded-md px-3 py-2 text-sm font-medium"
                             )}
                             aria-current={item.current ? "page" : undefined}

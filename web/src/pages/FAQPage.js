@@ -13,15 +13,10 @@ const isObjectEmpty = (objectName) => {
 
 
 function FAQPage() {
-  const [currentTime, setCurrentTime] = useState(0);
   const [userinfo, setUserInfo] = useCookie("userinfo", "");
 
   useEffect(() => {
-    fetch("/time")
-      .then((res) => res.json())
-      .then((data) => {
-        setCurrentTime(data.time);
-      });
+    document.title = 'PoseDee | FAQ';
   }, []);
 
   // console.log(isObjectEmpty(userinfo));
@@ -32,12 +27,6 @@ function FAQPage() {
         <ScrollToTopComp />
         <AlertComp />
         <FAQ />
-        <header className="App-header">
-          {/* เเปลงจาก Json จาก userinfo เป็น name */}
-          {/* {userinfo && JSON.parse(userinfo).name} */}
-
-          {/* <p>The current time is {currentTime}.</p> */}
-        </header>
       </div>
     );
   }

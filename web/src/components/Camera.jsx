@@ -1,17 +1,38 @@
-import React from 'react'
-import "../styles/App.css";
-import HeroImage from '../styles/posedee-feature-image1.gif';
+import React, { useRef, useState } from 'react';
 
-function Camera() {
-    return (
-        <div className = "App">
-            <div className="py-10" data-aos="fade-up" data-aos-delay="200" data-aos-duration="300">
-                <img className="mx-auto" src={HeroImage} width="1024" height="504" alt="Hero" />
-            </div>
+const Camera = () => {
+  const videoRef = useRef(null);
+  const [isCameraRunning, setIsCameraRunning] = useState(false);
 
-        </div>
-        
-    )
-}
+  const startCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      videoRef.current.srcObject = stream;
+      videoRef.current.play();
+      setIsCameraRunning(true);
+    } catch (err) {
+      console.error('Failed to access webcam', err);
+    }
+  };
 
-export default Camera
+  const stopCamera = () => {
+    videoRef.current.srcObject.getTracks().forEach(track => track.stop());
+    setIsCameraRunning(false);
+  };
+
+  return (
+    <div className="py-10 " data-aos="fade-up" data-aos-delay="200" data-aos-duration="300">
+      <div className="camera-container">
+      <video className ="border-4" ref={videoRef} width="780"/>
+      </div>
+      {!isCameraRunning ? (
+        <button onClick={startCamera}>Start Camera</button>
+      ) : (
+        <button onClick={stopCamera}>Stop Camera</button>
+      )}
+    </div>
+    
+  );
+};
+
+export default Camera;

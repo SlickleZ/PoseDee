@@ -3,18 +3,12 @@ import "../styles/App.css";
 import useCookie, { setCookie } from "react-use-cookie";
 import AppNavBar, { navigation } from "../components/AppNavBar";
 import ScrollToTopComp from "../components/ScrollToTopComp";
-import FAQ from "../components/FAQ";
-import Camera from "../components/Camera";
-import AlertComp from "../components/AlertComp";
+import Dashboard from "../components/Dashboard";
 
 const isObjectEmpty = (objectName) => {
   return Object.keys(objectName).length === 0;
 };
 
-// const updatedNavigation = [...navigation];
-// updatedNavigation[0].current = true;
-// updatedNavigation[1].current = false;
-// updatedNavigation[2].current = false;
 
 function App() {
   const [currentTime, setCurrentTime] = useState(0);
@@ -34,7 +28,7 @@ function App() {
       <div className="App">
         <AppNavBar />
         <ScrollToTopComp />
-        <AlertComp />
+        <Dashboard />
         {/* <Camera /> */}
         <header className="App-header">
           {/* เเปลงจาก Json จาก userinfo เป็น name */}

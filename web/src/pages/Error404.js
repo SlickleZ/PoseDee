@@ -36,7 +36,6 @@ function Error404() {
                   get where you need to go.
                 </p>
                 <Link
-                  to="/"
                   onClick={() => {
                     RemoveCookie();
                     window.location.href = "/";

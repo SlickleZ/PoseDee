@@ -4,7 +4,8 @@ import useCookie, { setCookie } from "react-use-cookie";
 import AppNavBar, { navigation } from "../components/AppNavBar";
 import ScrollToTopComp from "../components/ScrollToTopComp";
 import FAQ from "../components/FAQ";
-import Camera from "../components/Camera";
+import Camerat from "../components/Camerat";
+import DateTime from "../components/DateTime";
 import AlertComp from "../components/AlertComp";
 
 const isObjectEmpty = (objectName) => {
@@ -13,16 +14,16 @@ const isObjectEmpty = (objectName) => {
 
 
 function CameraPage() {
-  const [currentTime, setCurrentTime] = useState(0);
+  // const [currentTime, setCurrentTime] = useState(0);
   const [userinfo, setUserInfo] = useCookie("userinfo", "");
 
-  useEffect(() => {
-    fetch("/time")
-      .then((res) => res.json())
-      .then((data) => {
-        setCurrentTime(data.time);
-      });
-  }, []);
+  // useEffect(() => {
+  //   fetch("/time")
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       setCurrentTime(data.time);
+  //     });
+  // }, []);
 
   // console.log(isObjectEmpty(userinfo));
   if (!isObjectEmpty(userinfo)) {
@@ -30,12 +31,13 @@ function CameraPage() {
       <div className="App">
         <AppNavBar/>
         <ScrollToTopComp />
-        <Camera />
+        <Camerat />
+        {/* <DateTime /> */}
         <header className="App-header">
           {/* เเปลงจาก Json จาก userinfo เป็น name */}
           {/* {userinfo && JSON.parse(userinfo).name} */}
 
-          <p>The current time is {currentTime}.</p>
+          {/* <p>The current time is {currentTime}.</p> */}
         </header>
       </div>
     );
