@@ -127,7 +127,7 @@ def generate_frames():
     bad_frames = 0
 
     while is_camera_running:
-        success, frame = camera.read()
+        success, image = camera.read()
         if not success:
             break
         else:
@@ -260,7 +260,7 @@ def generate_frames():
                             (10, h - 20), font, 0.9, red, 2)
                     
 
-            ret, buffer = cv2.imencode('.jpg', frame)
+            ret, buffer = cv2.imencode('.jpg', image)
             frame = buffer.tobytes()
             
             yield (b'--frame\r\n'
