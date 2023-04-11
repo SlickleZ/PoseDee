@@ -17,15 +17,20 @@ function CameraPage() {
   // const [currentTime, setCurrentTime] = useState(0);
   const [userinfo, setUserInfo] = useCookie("userinfo", "");
 
-  // useEffect(() => {
-  //   fetch("/time")
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       setCurrentTime(data.time);
-  //     });
-  // }, []);
+    //   // Remove local storage and cookies when the user closes the browser tab
+    //   useEffect(() => {
+    //     const handleUnload = () => {
+    //         localStorage.clear(); // clear local storage
+    //         setCookie("userinfo", ""); // clear the userinfo cookie
+    //     };
 
-  // console.log(isObjectEmpty(userinfo));
+    //     window.addEventListener('beforeunload', handleUnload);
+
+    //     return () => {
+    //         window.removeEventListener('beforeunload', handleUnload);
+    //     };
+    // }, []);
+
   if (!isObjectEmpty(userinfo)) {
     return (
       <div className="App">

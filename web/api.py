@@ -1,7 +1,7 @@
 import os,pathlib,requests
 import time # for time only -> can be comment
 
-from flask import Flask, render_template, request, redirect, url_for, session, abort
+from flask import Flask, render_template, request, redirect, url_for, session, abort, jsonify
 from flask_dance.contrib.google import make_google_blueprint, google
 from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
@@ -115,7 +115,7 @@ is_camera_running = False
 
 def generate_frames():
     global is_camera_running
-
+    
     # Meta.
     fps = int(camera.get(cv2.CAP_PROP_FPS))
     width = int(camera.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -282,7 +282,7 @@ def generate_frames():
                         yield (b'--frame\r\n'
                             b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
                 continue
-
+            
 @app.route('/video_feed')
 def video_feed():
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')

@@ -53,17 +53,16 @@ body {
   transform: translate(-50%, -50%);
 }
 
-@media screen and (max-width: 768px) {
-  .camera-container {
-    width: 90%;
-  }
+.camera-off {
+  width: 100%; /* set width to 100% to make it responsive */
+  max-width: 780px; /* set max-width */
+  height: 442.25px; /* set max-height */
+  background-color: #ECECEC;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-@media screen and (max-width: 576px) {
-  .camera-container {
-    width: 100%;
-  }
-}
 
 .App-header {
   background-color: #f3f4f6;

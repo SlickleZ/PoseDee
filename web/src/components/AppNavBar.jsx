@@ -6,45 +6,21 @@ import lottie from "lottie-web";
 import { defineElement } from "lord-icon-element";
 import { Link } from 'react-router-dom';
 
-
-// define "lord-icon" custom element with default properties
-defineElement(lottie.loadAnimation);
-
-//remove cookies
-// const isObjectEmpty = (objectName) => {
-//   return Object.keys(objectName).length === 0;
-// };
-
-// export const navigation = [
-//   { name: "Posture Overviews", href: "/app", current: false },
-//   { name: "Tracking System", href: "/track", current: false },
-//   { name: "FAQ", href: "/faq", current: false },
-//   { name: "Our Approach", href: "https://github.com/SlickleZ/PoseDee", current: false },
-// ];
-
 export default function AppNavBar() {
-
   const [userinfo, setUserInfo] = useCookie("userinfo", "");
+  const [isCameraOn, setIsCameraOn] = useState(false);
 
   const RemoveCookie = (locale) => {
-    window.localStorage.clear();
     setCookie("userinfo", locale, {
       days: 0,
     });
   };
 
-    // const [navigation, setNavigation] = useState([
-    //   { name: "Posture Overviews", href: "/app", current: false },
-    //   { name: "Tracking System", href: "/track", current: false },
-    //   { name: "FAQ", href: "/faq", current: false },
-    //   { name: "Our Approach", href: "https://github.com/SlickleZ/PoseDee", current: false },
-    // ]);
-
     const initialState = [
       { name: "Posture Overviews", href: "/app", current: true },
       { name: "Tracking System", href: "/track", current: false },
       { name: "FAQ", href: "/faq", current: false },
-      { name: "Our Approach", href: "https://github.com/SlickleZ/PoseDee", current: false },
+      { name: "Our Approach", href: "https://github.com/SlickleZ/PoseDee", current: false, target: "_blank" },
     ];
   
     const [navigation, setNavigation] = useState(() => {
@@ -75,6 +51,16 @@ export default function AppNavBar() {
   }
   // console.log(navigation);
 
+  function handleStopClick() {
+    fetch('/stop_camera')
+        .then(() => {
+            setIsCameraOn(false);
+            // localStorage.setItem('isCameraOn', false);
+            // window.location.reload(false);
+        })
+        .catch(console.error);
+}
+
   return (
     <>
       <div className="min-h-full">
@@ -87,13 +73,6 @@ export default function AppNavBar() {
                   {/* Have to click multiple times to change current values --fixed*/}
                   <Link onClick={() => {handleClick(0); window.location.href="/app";}}>
                     <div className="py-1 flex-shrink-0 items-center">
-
-                      {/* <lord-icon
-                        src="https://cdn.lordicon.com/tkuydciy.json"
-                        trigger="hover"
-                        colors="primary:#121331,secondary:#ffffff,tertiary:#ffc738"
-                        style={{ width: "60px", height: "60px" }}
-                      ></lord-icon> */}
                         <lord-icon
                           src="https://cdn.lordicon.com/zlyxhzar.json"
                           trigger="loop-on-hover"
@@ -109,6 +88,7 @@ export default function AppNavBar() {
                           <a
                             key={item.name}
                             href={item.href}
+                            target={item.target}
                             onClick={() => handleClick(index)}
                             className={classNames(
                               item.current
@@ -180,8 +160,11 @@ export default function AppNavBar() {
                                 {({ active }) => (
                                   <a
                                     href={item.href}
+                                    target={item.target}
                                     onClick={() => {
                                       RemoveCookie();
+                                      localStorage.clear();
+                                      handleStopClick();
                                       window.location.href = "/";
                                     }}
                                     className={classNames(
@@ -221,10 +204,12 @@ export default function AppNavBar() {
 
               <Disclosure.Panel className="md:hidden">
                 <div className="space-y-1 px-2 pt-2 pb-3 sm:px-3">
-                  {navigation.map((item) => (
+                  {navigation.map((item,index) => (
                     <Disclosure.Button
                       key={item.name}
                       as="a"
+                      onClick={() => handleClick(index)}
+                      target={item.target}
                       href={item.href}
                       className={classNames(
                         item.current
@@ -271,6 +256,8 @@ export default function AppNavBar() {
                         href={item.href}
                         onClick={() => {
                           RemoveCookie();
+                          localStorage.clear();
+                          handleStopClick();
                           window.location.href = "/";
                         }}
                         className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"

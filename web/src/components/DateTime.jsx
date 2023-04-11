@@ -28,8 +28,8 @@ export const DateTime = () => {
 
   return (
     <div>
-      <p>
-        {formattedTime} | {formattedDate}
+      <p className= "mt-3 mb-5 font-bold">
+        Clock: {formattedTime} | {formattedDate}
       </p>
     </div>
   );

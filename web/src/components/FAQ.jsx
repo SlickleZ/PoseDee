@@ -4,8 +4,8 @@ function FAQ() {
 
   return (
     <div>
-      <div class="p-6">
-        <div class="bg-white p-5 rounded-lg shadow-xl mt-12" >
+      <div class="p-10">
+        <div class="bg-white p-10 rounded-lg shadow-xl mt-1" >
           {/* data-aos="fade-up" data-aos-delay="200" data-aos-duration="300" */}
           <h4 class="text-4xl font-bold text-gray-800 tracking-widest uppercase text-center">
             FAQ

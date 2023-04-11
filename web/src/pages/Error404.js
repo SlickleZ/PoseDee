@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import "../styles/App.css";
 import { Link } from "react-router-dom";
 import useCookie, { setCookie } from "react-use-cookie";
@@ -8,6 +8,7 @@ function getCurrentURL() {
 }
 function Error404() {
   const url = getCurrentURL();
+  const [isCameraOn, setIsCameraOn] = useState(false);
 
   const RemoveCookie = (locale) => {
     window.localStorage.clear();
@@ -15,6 +16,20 @@ function Error404() {
       days: 0,
     });
   };
+
+  function handleStopClick() {
+    fetch("/stop_camera")
+      .then(() => {
+        setIsCameraOn(false);
+        localStorage.setItem('isCameraOn', false);
+        // window.location.reload(false);
+      })
+      .catch(console.error);
+  }
+
+  useEffect(() => {
+    handleStopClick();
+  }, []);
 
   return (
     <div className="App">
@@ -38,6 +53,7 @@ function Error404() {
                 <Link
                   onClick={() => {
                     RemoveCookie();
+                    localStorage.clear();
                     window.location.href = "/";
                   }}
                   className="sm:w-full lg:w-auto my-2 border rounded md py-4 px-8 border-transparent px-4 py-2 my-2 rounded-sm text-white bg-emerald-600 hover:bg-emerald-400 transition duration-150 ease-in-out"
@@ -49,7 +65,8 @@ function Error404() {
             <img src="https://i.ibb.co/G9DC8S0/404-2.png" />
           </div>
         </div>
-        <img className = "rounded"
+        <img
+          className="rounded"
           src="https://i.pinimg.com/originals/ef/8b/bd/ef8bbd4554dedcc2fd1fd15ab0ebd7a1.gif"
           width="430px"
         />
