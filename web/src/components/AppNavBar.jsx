@@ -87,9 +87,9 @@ export default function AppNavBar() {
                         {navigation.map((item,index) => (
                           <a
                             key={item.name}
-                            href={item.href}
+                            // href={item.href}
                             target={item.target}
-                            onClick={() => handleClick(index)}
+                            onClick={() => {handleClick(index); window.location.href=item.href;}}
                             className={classNames(
                               item.current
                                 ? "bg-gray-900 text-white"
@@ -208,9 +208,9 @@ export default function AppNavBar() {
                     <Disclosure.Button
                       key={item.name}
                       as="a"
-                      onClick={() => handleClick(index)}
+                      onClick={() => {handleClick(index); window.location.href=item.href;}}
                       target={item.target}
-                      href={item.href}
+                      // href={item.href}
                       className={classNames(
                         item.current
                           ? "bg-gray-900 text-white"

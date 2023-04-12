@@ -26,16 +26,14 @@ function FAQ() {
               <div>
                 <div class="flex items-center h-16">
                   <span class="text-lg text-blue-600 font-bold">
-                    Lorem ipsum dolor sit amet?
+                  What exactly is Posdee, and how can it help me improve my posture?
                   </span>
                 </div>
                 <div class="flex items-center py-2">
                   <span class="text-gray-500">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Quae, dignissimos. Neque eos, dignissimos provident
-                    reiciendis debitis repudiandae commodi perferendis et
-                    itaque, similique fugiat cumque impedit iusto vitae
-                    dolorum. Nostrum, fugit!
+                  Posdee is a comprehensive posture tracking app that not only alerts you 
+                  when you need to adjust your posture but also tracks and stores your data 
+                  to help you identify areas where you need improvement.
                   </span>
                 </div>
               </div>
@@ -53,16 +51,13 @@ function FAQ() {
               <div>
                 <div class="flex items-center h-16">
                   <span class="text-lg text-blue-600 font-bold">
-                    Consectetur adipisicing elit?
+                  How can I effortlessly track my posture data?
                   </span>
                 </div>
-                <div class="flex items-center py-2">
+                <div class="flex items-center py-6">
                   <span class="text-gray-500">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Quae, dignissimos. Neque eos, dignissimos provident
-                    reiciendis debitis repudiandae commodi perferendis et
-                    itaque, similique fugiat cumque impedit iusto vitae
-                    dolorum. Nostrum, fugit!
+                  By simply opening your camera and not navigating through multiple pages, 
+                  our posture tracking website captures your data seamlessly.
                   </span>
                 </div>
               </div>
@@ -80,16 +75,13 @@ function FAQ() {
               <div>
                 <div class="flex items-center h-16">
                   <span class="text-lg text-blue-600 font-bold">
-                    Neque eos, dignissimos provident reiciendis debitis?
+                  What happens if my camera fails to detect me while using Posdee?
                   </span>
                 </div>
                 <div class="flex items-center py-2">
                   <span class="text-gray-500">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Quae, dignissimos. Neque eos, dignissimos provident
-                    reiciendis debitis repudiandae commodi perferendis et
-                    itaque, similique fugiat cumque impedit iusto vitae
-                    dolorum. Nostrum, fugit!
+                  If your camera cannot detect you, your posture data will not be updated. 
+                  We advise users to remain active and maintain good posture to ensure the camera captures your data accurately.
                   </span>
                 </div>
               </div>
@@ -107,16 +99,12 @@ function FAQ() {
               <div>
                 <div class="flex items-center h-16">
                   <span class="text-lg text-blue-600 font-bold">
-                    Repudiandae commodi perferendis et itaque?
+                  How can I sign out of the website?
                   </span>
                 </div>
-                <div class="flex items-center py-2">
+                <div class="flex items-center py-6">
                   <span class="text-gray-500">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Quae, dignissimos. Neque eos, dignissimos provident
-                    reiciendis debitis repudiandae commodi perferendis et
-                    itaque, similique fugiat cumque impedit iusto vitae
-                    dolorum. Nostrum, fugit!
+                  To sign out, click on the signout button located under your profile picture button to end your website session.
                   </span>
                 </div>
               </div>
