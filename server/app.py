@@ -1,4 +1,4 @@
-from flask import Flask, Response, request, url_for, jsonify
+from flask import Flask, Response, request, url_for, jsonify, abort
 from rethinkdb import r
 from rethinkdb.errors import RqlError, RqlRuntimeError, RqlDriverError
 import json
@@ -11,7 +11,7 @@ HOST_DB = "172.31.29.127" # private IP
 @app.before_request
 def before_request():
     try:
-        app.rdb_conn = r.connect(host="52.221.198.84", port=28015, db="posedee")
+        app.rdb_conn = r.connect(host="54.254.191.108", port=28015, db="posedee")
     except RqlDriverError:
         abort(503, "No database connection could be established.")
 
@@ -65,6 +65,8 @@ def realtimeProgressGet(userId):
         except RqlError as e:
             return Response(json.dumps({"message": "Error occurred!", "error": e.message}), status=500, content_type="application/json")
         finally:
+            cursorAll.close()
+            cursorChange.close()
             app.rdb_conn.close()
 
     return Response(response=events(), status=200, content_type='text/event-stream')
@@ -83,29 +85,6 @@ def get_summary_progress(userId):
     finally:
         app.rdb_conn.close()
 
-
-# @app.route("/users", methods=['GET'])
-# def get_users():
-#     def events():
-#         cursorAll = r.table("users").order_by(index="id").run(app.rdb_conn)
-#         for doc in cursorAll:
-#             print(doc, type(doc))
-#             yield f"data: {json.dumps(doc)}" + "\n\n"
-            
-#         cursorChange = r.table("users").changes().run(app.rdb_conn)
-#         for document in cursorChange:
-#             print(document, type(document))
-#             yield f"data: {json.dumps(document)}" + "\n\n"
-#         app.rdb_conn.close()
-
-#     return Response(response=events(), status=200, content_type='text/event-stream')
-
-# @app.route("/del")
-# def delDB():
-#     r.table_create("users").run(app.rdb_conn)
-#     r.table("users").delete().run(app.rdb_conn)
-#     app.rdb_conn.close()
-#     return "OK"
 
 if __name__ == "__main__":
     app.run()
