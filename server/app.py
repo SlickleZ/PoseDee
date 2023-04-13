@@ -11,7 +11,7 @@ HOST_DB = "172.31.29.127" # private IP
 @app.before_request
 def before_request():
     try:
-        app.rdb_conn = r.connect(host="54.254.191.108", port=28015, db="posedee")
+        app.rdb_conn = r.connect(host=HOST_DB, port=28015, db="posedee")
     except RqlDriverError:
         abort(503, "No database connection could be established.")
 
