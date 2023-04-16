@@ -23,8 +23,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "PORT=3001 react-scripts start",
-    "start-api": "FLASK_APP=api.py flask run --no-debugger",
+    "start": "set PORT=3001 && react-scripts start",
+    "start-api": "set FLASK_APP=api.py && flask run --no-debugger",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "test-api": "flask test",
