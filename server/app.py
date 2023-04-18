@@ -2,6 +2,7 @@ from flask import Flask, Response, request, url_for, jsonify, abort
 from rethinkdb import r
 from rethinkdb.errors import RqlError, RqlRuntimeError, RqlDriverError
 import json
+import datetime
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -21,6 +22,11 @@ def index():
     return Response("Yo! stranger", content_type="text/plain")
 
 
+
+# =============================================================================
+# user routes
+# =============================================================================
+
 # route to post user data into user database (req/res)
 @app.route("/users", methods=["POST"])
 def add_users():
@@ -38,11 +44,38 @@ def add_users():
         app.rdb_conn.close()
 
 
+
+# ==============================================================================
+# Daily graph routes
+# ==============================================================================
+
+# TODO:
 # route to post camera data into camera database (req/res)
-@app.route("/rt/progress", methods=["POST"])
+@app.route("/api/db/daily", methods=["POST"])
 def realtimeProgressPost():
     try:
-        r.table("logs_rt_daily").insert(request.get_json()).run(app.rdb_conn)
+        data = request.get_json()
+        neck = float(data.get("neck_inclination"))
+        torso = float(data.get("torso_inclination"))
+                
+        # add necessary columns
+        data['Year'] = int(data.get("Timestamp")[:4])
+        data['Month'] = int(data.get("Timestamp")[5:7])
+        data['Day'] = int(data.get("Timestamp")[8:10])
+        data["Day_Name"] = datetime.date(data["Year"], data["Month"], data["Day"]).strftime("%A")
+        data["Week"] = datetime.date(data["Year"], data["Month"], data["Day"]).isocalendar().week
+        data['Hour'] = int(data.get("Timestamp")[11:13])
+        data['Minute'] = int(data.get("Timestamp")[14:16])
+        
+        if (neck < 40 and torso > 10):
+            data["why_bad"] = "torso"
+        elif (neck > 40 and torso < 10):
+            data["why_bad"] = "neck"
+        elif (neck > 40 and torso > 10):
+            data["why_bad"] = "both"
+
+        
+        r.table("logs_rt_daily").insert(data).run(app.rdb_conn)
         return Response(json.dumps({"message": "Insert successful"}), status=200, content_type="application/json")
     except RqlError as e:
         return Response(json.dumps({"message": "Error occurred!", "error": e.message}), status=500, content_type="application/json")
@@ -72,14 +105,80 @@ def realtimeProgressGet(userId):
     return Response(response=events(), status=200, content_type='text/event-stream')
 
 
+
+# =============================================================================
+# Summary graph routes
+# =============================================================================
+
+def minToHourOfDay(doc):
+    doc["Count"] = doc["Count"] / 3600
+    return doc
+
 # TODO:
-# route to get summary progress of each user (req/res)
-@app.route("/svc/progress/<userId>", methods=["GET"])
-def get_summary_progress(userId):
+# route to get weekly necessary data of each user for weekly graph (req/res)
+@app.route("/api/dash/weekly/<userId>", methods=["GET"])
+def getWeeklyData(userId):
     try:
-        progressList = list(r.table("logs_summary").get_all(userId, index="userId").run(app.rdb_conn))
-        # print(progressList)
-        return Response(json.dumps(progressList), status=200, content_type="application/json")
+        currentWeek = datetime.datetime.now().isocalendar().week
+        
+        weeklyList = list(r.table("logs_summary")
+                            .filter(
+                                (r.row["userId"] == userId) & (r.row["Week"] == currentWeek)
+                            )
+                            .group("Day","Day_Name", "Posture")
+                            .count()
+                            .run(app.rdb_conn))
+        # print(map(minToHourOfDay, weeklyList))
+        print(weeklyList)
+        return Response(json.dumps(weeklyList), status=200, content_type="application/json")
+    except RqlError as e:
+        return Response(json.dumps({"message": "Error occurred!", "error": e.message}), status=500, content_type="application/json")
+    finally:
+        app.rdb_conn.close()
+
+
+# route to get monthly necessary data of each user for monthly graph (req/res)
+@app.route("/api/dash/monthly/<userId>", methods=["GET"])
+def getMonthlyData(userId):
+    try:
+        currentMonth = datetime.datetime.now().month
+        
+        monthlyList = list(r.table("logs_summary")
+                            .filter(
+                                (r.row["userId"] == userId) & (r.row["Month"] == currentMonth)
+                            )
+                            .group("Day", "Posture")
+                            .count()
+                            .run(app.rdb_conn))
+        # print(map(minToHourOfDay, monthlyList))
+        print(monthlyList)
+        return Response(json.dumps(monthlyList), status=200, content_type="application/json")
+    except RqlError as e:
+        return Response(json.dumps({"message": "Error occurred!", "error": e.message}), status=500, content_type="application/json")
+    finally:
+        app.rdb_conn.close()
+
+
+def minToHourOfMonth(doc):
+    doc["Count"] = doc["Count"] / 2592000
+    return doc
+
+
+@app.route("/api/dash/yearly/<userId>", methods=["GET"])
+def getYearlyData(userId):
+    try:
+        currentYear = datetime.datetime.now().year
+        
+        yearlyList = list(r.table("logs_summary")
+                            .filter(
+                                (r.row["userId"] == userId) & (r.row["Year"] == currentYear)
+                            )
+                            .group("Month", "Posture")
+                            .count()
+                            .run(app.rdb_conn))
+        # print(map(minToHourOfMonth, yearlyList))
+        print(yearlyList)
+        return Response(json.dumps(yearlyList), status=200, content_type="application/json")
     except RqlError as e:
         return Response(json.dumps({"message": "Error occurred!", "error": e.message}), status=500, content_type="application/json")
     finally:
