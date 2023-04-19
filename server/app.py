@@ -6,6 +6,7 @@ import datetime
 
 app = Flask(__name__)
 app.config.from_object(__name__)
+# HOST_DB = "172.31.29.127" # private IP
 HOST_DB = "172.31.29.127" # private IP
 
 
@@ -50,7 +51,7 @@ def add_users():
 # ==============================================================================
 
 # TODO:
-# route to post camera data into camera database (req/res)
+# route to insert camera data into daily database (req/res)
 @app.route("/api/db/daily", methods=["POST"])
 def realtimeProgressPost():
     try:
@@ -163,7 +164,7 @@ def minToHourOfMonth(doc):
     doc["Count"] = doc["Count"] / 2592000
     return doc
 
-
+# route to get yearly necessary data of each user for yearly graph (req/res)
 @app.route("/api/dash/yearly/<userId>", methods=["GET"])
 def getYearlyData(userId):
     try:

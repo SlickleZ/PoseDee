@@ -10,3 +10,6 @@ __pycache__/
 
 # Distribution / packaging
 node_modules/
+
+# Ignore mock data file
+MOCK_DATA.json
