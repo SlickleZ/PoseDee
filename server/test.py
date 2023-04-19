@@ -52,34 +52,35 @@ def wipeoutDB():
       
 
 def readAndInsert(table):
-  try:
-      conn = r.connect(host=HOST_DB, port=28015, db="posedee")
-  except RqlError:
-      print("No database connection could be established.")
-  
-  with open("MOCK_DATA.json") as fromFile:
-      data = json.load(fromFile)
-      for doc in data:
-        neck = float(doc.get("neck_inclination"))
-        torso = float(doc.get("torso_inclination"))
-                
-        # add necessary columns
-        doc['Year'] = int(doc.get("Timestamp")[:4])
-        doc['Month'] = int(doc.get("Timestamp")[5:7])
-        doc['Day'] = int(doc.get("Timestamp")[8:10])
-        doc["Day_Name"] = datetime.date(doc["Year"], doc["Month"], doc["Day"]).strftime("%A")
-        doc["Week"] = datetime.date(doc["Year"], doc["Month"], doc["Day"]).isocalendar().week
-        doc['Hour'] = int(doc.get("Timestamp")[11:13])
-        doc['Minute'] = int(doc.get("Timestamp")[14:16])
-        
-        if (neck < 40 and torso > 10):
-            doc["why_bad"] = "torso"
-        elif (neck > 40 and torso < 10):
-            doc["why_bad"] = "neck"
-        elif (neck > 40 and torso > 10):
-            doc["why_bad"] = "both"
+    try:
+        conn = r.connect(host=HOST_DB, port=28015, db="posedee")
+    except RqlError:
+        print("No database connection could be established.")
 
-        r.table(table).insert(doc).run(conn)
-      conn.close()
+    with open("MOCK_DATA.json") as fromFile:
+        data = json.load(fromFile)
+        for i, doc in enumerate(data, start=1):
+            neck = float(doc.get("neck_inclination"))
+            torso = float(doc.get("torso_inclination"))
+
+            # add necessary columns
+            doc['Year'] = int(doc.get("Timestamp")[:4])
+            doc['Month'] = int(doc.get("Timestamp")[5:7])
+            doc['Day'] = int(doc.get("Timestamp")[8:10])
+            doc["Day_Name"] = datetime.date(doc["Year"], doc["Month"], doc["Day"]).strftime("%A")
+            doc["Week"] = datetime.date(doc["Year"], doc["Month"], doc["Day"]).isocalendar().week
+            doc['Hour'] = int(doc.get("Timestamp")[11:13])
+            doc['Minute'] = int(doc.get("Timestamp")[14:16])
+
+            if (neck < 40 and torso > 10):
+                doc["why_bad"] = "torso"
+            elif (neck > 40 and torso < 10):
+                doc["why_bad"] = "neck"
+            elif (neck > 40 and torso > 10):
+                doc["why_bad"] = "both"
+
+            r.table(table).insert(doc).run(conn)
+            print(f"Insert document successfully ({i}/{len(data)})")
+        conn.close()
 
 readAndInsert("logs_rt_daily")
