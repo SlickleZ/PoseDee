@@ -7,7 +7,7 @@ import datetime
 app = Flask(__name__)
 app.config.from_object(__name__)
 # HOST_DB = "172.31.29.127" # private IP
-HOST_DB = "172.31.29.127" # private IP
+HOST_DB = "54.254.243.199" # private IP
 
 
 @app.before_request
@@ -111,8 +111,13 @@ def realtimeProgressGet(userId):
 # Summary graph routes
 # =============================================================================
 
-def minToHourOfDay(doc):
-    doc["Count"] = doc["Count"] / 3600
+def transformAndMinToHourOfDayOfWeekly(doc):
+    doc["Day"] = doc["group"][0]
+    doc["Day_Name"] = doc["group"][1]
+    doc["Posture"] = doc["group"][2]
+    doc["Count"] = doc["reduction"] / 3600
+    doc.pop("group")
+    doc.pop("reduction")
     return doc
 
 # TODO:
@@ -121,6 +126,7 @@ def minToHourOfDay(doc):
 def getWeeklyData(userId):
     try:
         currentWeek = datetime.datetime.now().isocalendar().week
+        # currentWeek = 21 # test
         
         weeklyList = list(r.table("logs_summary")
                             .filter(
@@ -128,14 +134,24 @@ def getWeeklyData(userId):
                             )
                             .group("Day","Day_Name", "Posture")
                             .count()
+                            .ungroup()
                             .run(app.rdb_conn))
-        # print(map(minToHourOfDay, weeklyList))
-        print(weeklyList)
-        return Response(json.dumps(weeklyList), status=200, content_type="application/json")
+        result = list(map(transformAndMinToHourOfDayOfWeekly, weeklyList))
+        # print(weeklyList)
+        return Response(json.dumps(result), status=200, content_type="application/json")
     except RqlError as e:
         return Response(json.dumps({"message": "Error occurred!", "error": e.message}), status=500, content_type="application/json")
     finally:
         app.rdb_conn.close()
+
+
+def transformAndMinToHourOfDayOfMonthly(doc):
+    doc["Day"] = doc["group"][0]
+    doc["Posture"] = doc["group"][1]
+    doc["Count"] = doc["reduction"] / 3600
+    doc.pop("group")
+    doc.pop("reduction")
+    return doc
 
 
 # route to get monthly necessary data of each user for monthly graph (req/res)
@@ -143,6 +159,7 @@ def getWeeklyData(userId):
 def getMonthlyData(userId):
     try:
         currentMonth = datetime.datetime.now().month
+        # currentMonth = 6 # test
         
         monthlyList = list(r.table("logs_summary")
                             .filter(
@@ -150,18 +167,23 @@ def getMonthlyData(userId):
                             )
                             .group("Day", "Posture")
                             .count()
+                            .ungroup()
                             .run(app.rdb_conn))
-        # print(map(minToHourOfDay, monthlyList))
-        print(monthlyList)
-        return Response(json.dumps(monthlyList), status=200, content_type="application/json")
+        result = list(map(transformAndMinToHourOfDayOfMonthly, monthlyList))
+        # print(monthlyList)
+        return Response(json.dumps(result), status=200, content_type="application/json")
     except RqlError as e:
         return Response(json.dumps({"message": "Error occurred!", "error": e.message}), status=500, content_type="application/json")
     finally:
         app.rdb_conn.close()
 
 
-def minToHourOfMonth(doc):
-    doc["Count"] = doc["Count"] / 2592000
+def transformAndMinToHourOfMonth(doc):
+    doc["Month"] = doc["group"][0]
+    doc["Posture"] = doc["group"][1]
+    doc["Count"] = float(doc["reduction"] / 2592000)
+    doc.pop("group")
+    doc.pop("reduction")
     return doc
 
 # route to get yearly necessary data of each user for yearly graph (req/res)
@@ -169,17 +191,19 @@ def minToHourOfMonth(doc):
 def getYearlyData(userId):
     try:
         currentYear = datetime.datetime.now().year
+        # currentYear = 2022 # test
         
-        yearlyList = list(r.table("logs_summary")
-                            .filter(
+        yearlyList = list(r.table("logs_summary").filter(
                                 (r.row["userId"] == userId) & (r.row["Year"] == currentYear)
                             )
-                            .group("Month", "Posture")
-                            .count()
-                            .run(app.rdb_conn))
-        # print(map(minToHourOfMonth, yearlyList))
-        print(yearlyList)
-        return Response(json.dumps(yearlyList), status=200, content_type="application/json")
+                          .group("Month","Posture")
+                          .count()
+                          .ungroup()
+                          .run(app.rdb_conn))
+
+        result = list(map(transformAndMinToHourOfMonth, yearlyList))
+        # print(yearlyList)
+        return Response(json.dumps(result), status=200, content_type="application/json")
     except RqlError as e:
         return Response(json.dumps({"message": "Error occurred!", "error": e.message}), status=500, content_type="application/json")
     finally:

@@ -4,7 +4,7 @@ from rethinkdb.errors import RqlError
 import json
 import datetime
 
-HOST_DB = "172.31.29.127" # private IP
+HOST_DB = "54.254.243.199" # private IP
 
 def to_dataFrame():
     msg = """[
@@ -59,6 +59,7 @@ def readAndInsert(table):
 
     with open("MOCK_DATA.json") as fromFile:
         data = json.load(fromFile)
+        lengthOfDoc = len(data)
         for i, doc in enumerate(data, start=1):
             neck = float(doc.get("neck_inclination"))
             torso = float(doc.get("torso_inclination"))
@@ -71,7 +72,8 @@ def readAndInsert(table):
             doc["Week"] = datetime.date(doc["Year"], doc["Month"], doc["Day"]).isocalendar().week
             doc['Hour'] = int(doc.get("Timestamp")[11:13])
             doc['Minute'] = int(doc.get("Timestamp")[14:16])
-
+            doc["userId"] = "ue781dzdc"
+            
             if (neck < 40 and torso > 10):
                 doc["why_bad"] = "torso"
             elif (neck > 40 and torso < 10):
@@ -80,7 +82,8 @@ def readAndInsert(table):
                 doc["why_bad"] = "both"
 
             r.table(table).insert(doc).run(conn)
-            print(f"Insert document successfully ({i}/{len(data)})")
+            print(f"Insert document successfully ({i}/{lengthOfDoc})")
         conn.close()
 
 readAndInsert("logs_rt_daily")
+# wipeoutDB()

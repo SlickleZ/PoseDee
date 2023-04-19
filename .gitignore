@@ -13,3 +13,6 @@ node_modules/
 
 # Ignore mock data file
 MOCK_DATA.json
+
+# ignore test file
+test.py
