@@ -18,7 +18,7 @@ function Callback() {
             email: query.get("email"),
             picture: query.get("picture")
         }))
-        window.location.href="/app"
+        window.location.href="/track"
     },[])
   return (
     <div>

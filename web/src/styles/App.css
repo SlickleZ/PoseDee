@@ -46,6 +46,10 @@ body {
 
 } */
 
+.myClickable {
+  cursor: pointer;
+}
+
 .camera-container {
   position: absolute;
   top: 40%;

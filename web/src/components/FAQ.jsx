@@ -81,12 +81,36 @@ function FAQ() {
               <div>
                 <div class="flex items-center h-16">
                   <span class="text-lg text-blue-900 font-bold">
+                  If the user minimizes the browser tab, can the camera still be tracked?
+                  </span>
+                </div>
+                <div class="flex items-center py-2">
+                  <span class="text-gray-500">
+                  Yes, in general, the PoseDee tracking system depends on browser permissions, and if the user has given permission for access to the camera, then minimizing the browser tab or switching to a different tab shouldn't have an impact on the camera tracking. 
+                  <p className="py-2">In these circumstances, whether or not the browser tab is minimized, the user must ensure that the camera feed is always visible and should sit properly until the right corner of the camera feed says "aligned". This might be accomplished by moving the user's position so that they are visible on the camera stream.</p>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 flex">
+              <div>
+                <div class="flex items-center h-16 border-l-4 border-blue-900">
+                  <span class="text-4xl text-blue-900 px-4">Q.</span>
+                </div>
+                <div class="flex items-center h-16 border-l-4 border-gray-400">
+                  <span class="text-4xl text-gray-400 px-4">A.</span>
+                </div>
+              </div>
+              <div>
+                <div class="flex items-center h-16">
+                  <span class="text-lg text-blue-900 font-bold">
                   What happens if my camera fails to detect me while using Posdee?
                   </span>
                 </div>
                 <div class="flex items-center py-2">
                   <span class="text-gray-500">
-                  Your posture data will not be updated if your camera is unable to recognize you, as all camera variables would not be shown on the camera screen. For the camera to properly record your data, we suggest users to stay active and keep excellent posture.
+                  Your posture data <span class="underline">will not be updated</span> if your camera is unable to recognize you, as all camera variables would not be shown on the camera screen. For the camera to properly record your data, we suggest users to stay active and keep excellent posture.
                   </span>
                 </div>
               </div>
@@ -107,9 +131,9 @@ function FAQ() {
                   How can I sign out of the website?
                   </span>
                 </div>
-                <div class="flex items-center py-6">
+                <div class="flex items-center py-2">
                   <span class="text-gray-500">
-                  To sign out, click on the signout button located under your profile picture button to end your website session. Which will draw close to your webcam!
+                  To sign out, click on the signout button located under your profile picture button to end your website session. Don't worry, the program will shut off the camera and also stop monitoring your posture.
                   </span>
                 </div>
               </div>

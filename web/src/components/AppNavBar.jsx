@@ -97,7 +97,7 @@ export default function AppNavBar() {
                     </div>
                     </Link>
                     <div className="hidden md:block">
-                      <div className="ml-10 flex items-baseline space-x-4">
+                      <div className="ml-10 flex items-baseline space-x-4 myClickable">
                         {navigation.map((item,index) => (
                           <a
                             key={item.name}
@@ -217,7 +217,7 @@ export default function AppNavBar() {
               </div>
 
               <Disclosure.Panel className="md:hidden">
-                <div className="space-y-1 px-2 pt-2 pb-3 sm:px-3">
+                <div className="space-y-1 px-2 pt-2 pb-3 sm:px-3 myClickable">
                   {navigation.map((item,index) => (
                     <Disclosure.Button
                       key={item.name}
