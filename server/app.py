@@ -217,7 +217,7 @@ def getRealtimeCause(userId):
     def events():
         try:
             result = list(r.table("logs_rt_daily").filter(
-                              (r.row["userId"] == userId) & (r.row["Timestamp"].match("^2022-04-13.*$")) # test
+                              (r.row["userId"] == userId) # & (r.row["Timestamp"].match("^2022-04-13.*$")) # test
                           ).group("why_bad").count().ungroup().run(app.rdb_conn))
             
             result = list(map(transformCauseKey, result))
