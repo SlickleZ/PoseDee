@@ -17,7 +17,7 @@ def before_request():
     except RqlDriverError:
         abort(503, "No database connection could be established.")
 
-
+# index route
 @app.route("/")
 def index():
     return Response("Yo! stranger", content_type="text/plain")
@@ -212,6 +212,7 @@ def transformCauseKey(doc):
     doc.pop("reduction")
     return doc
 
+# route to get all daily main bad posture cause of each user (event streaming)
 @app.route("/realtime/cause/<userId>", methods=["GET"])
 def getRealtimeCause(userId):
     def events():
