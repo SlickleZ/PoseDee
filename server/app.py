@@ -7,7 +7,7 @@ import datetime
 app = Flask(__name__)
 app.config.from_object(__name__)
 # HOST_DB = "172.31.29.127" # private IP
-HOST_DB = "54.254.243.199" # private IP
+HOST_DB = "13.215.50.151" # private IP
 
 
 @app.before_request
@@ -29,12 +29,12 @@ def index():
 # =============================================================================
 
 # route to post user data into user database (req/res)
-@app.route("/users", methods=["POST"])
+@app.route("/api/users", methods=["POST"])
 def add_users():
     try:
         data = request.get_json()
         if not list(
-            r.table("users").get_all(data["id"], index="id").run(app.rdb_conn)
+            r.table("users").get_all(data["userId"], index="userId").run(app.rdb_conn)
         ):
             r.table("users").insert(data).run(app.rdb_conn)
             return Response(json.dumps({"message": "Insert successful"}), status=200, content_type="application/json")
@@ -50,7 +50,7 @@ def add_users():
 # Daily graph routes
 # ==============================================================================
 
-# TODO:
+
 # route to insert camera data into daily database (req/res)
 @app.route("/api/db/daily", methods=["POST"])
 def realtimeProgressPost():
@@ -82,24 +82,155 @@ def realtimeProgressPost():
         return Response(json.dumps({"message": "Error occurred!", "error": e.message}), status=500, content_type="application/json")
     finally:
         app.rdb_conn.close()
+        
+        
+def transformAndMinToHourOfDay(doc):
+    doc["Hour"] = doc["group"][0]
+    doc["Posture"] = doc["group"][1]
+    doc["Count"] = doc["reduction"] / 60
+    doc.pop("group")
+    doc.pop("reduction")
+    return doc
+        
+# route to get hourly graph necessary data (req/res)
+@app.route("/api/dash/hourly/<userId>", methods=["GET"])
+def getHourlyData(userId):
+    try:
+        hourlyList = list(r.table("logs_rt_daily")
+                          .filter(
+                              (r.row["userId"] == userId) # & (r.row["Timestamp"].match("^2022-04-03.*$")) # test
+                          )
+                          .group("Hour", "Posture")
+                          .count()
+                          .ungroup()
+                          .run(app.rdb_conn))
+        
+        result = list(map(transformAndMinToHourOfDay, hourlyList))
+        # print(hourlyList)
+        return Response(json.dumps(result), status=200, content_type="application/json")
+    except RqlError as e:
+        return Response(json.dumps({"message": "Error occurred!", "error": e.message}), status=500, content_type="application/json")
+    finally:
+        app.rdb_conn.close()
 
 
-# route to get all daily progress of each user (event streaming)
-@app.route("/rt/progress/<userId>", methods=["GET"])
-def realtimeProgressGet(userId):
+def transformGaugeColumnName(doc):
+    doc["Posture"] = doc["group"]
+    doc["Count"] = doc["reduction"]
+    doc.pop("group")
+    doc.pop("reduction")
+    return doc
+
+# route to get gauge graph necessary data (req/res)
+@app.route("/api/dash/gauge/<userId>", methods=["GET"])
+def getGaugeData(userId):
+    try:
+        result = list(r.table("logs_rt_daily")
+                          .filter(
+                              (r.row["userId"] == userId) # & (r.row["Timestamp"].match("^2022-04-13.*$")) # test
+                          )
+                          .group("Posture")
+                          .count()
+                          .ungroup()
+                          .run(app.rdb_conn))
+        
+        result = list(map(transformGaugeColumnName, result))
+        # print(result)
+        # print(round(result[1]["Count"] / (result[0]["Count"] + result[1]["Count"]) * 100, 2), " %") 
+        return Response(json.dumps(result), status=200, content_type="application/json")
+    except RqlError as e:
+        return Response(json.dumps({"message": "Error occurred!", "error": e.message}), status=500, content_type="application/json")
+    finally:
+        app.rdb_conn.close()
+
+
+# route to get all daily posture durations of each user (Bank's duration display) (event streaming)
+@app.route("/realtime/progress/<userId>", methods=["GET"])
+def getRealtimeProgress(userId):
     def events():
         try:
-            cursorAll = r.table("logs_rt_daily").get_all(userId, index="userId").run(app.rdb_conn)
-            for doc in cursorAll:
-                yield f"data: {json.dumps(doc)}" + "\n\n"
+            result = list(r.table("logs_rt_daily").filter(
+                              (r.row["userId"] == userId) # & (r.row["Timestamp"].match("^2022-04-13.*$")) # test
+                          ).group("Posture").count().ungroup().run(app.rdb_conn))
+            
+            result = list(map(transformGaugeColumnName, result))
+            yield f"data: {json.dumps(result)}" + "\n\n" # format -> data: [{"Posture": 0, "Count": 0.0}, {"Posture": 1, "Count": 0.0}]
                 
-            cursorChange = r.table("logs_rt_daily").get_all(userId, index="userId").changes().run(app.rdb_conn)
-            for document in cursorChange:
-                yield f"data: {json.dumps(document['new_val'])}" + "\n\n"
+            cursorChange = r.table("logs_rt_daily").get_all(userId, index="userId").pluck("Posture").changes().run(app.rdb_conn)
+            for doc in cursorChange:
+                # format -> data: {"new_val": {"Posture": 0}, "old_val": null}
+                yield f"data: {json.dumps(doc)}" + "\n\n" # yield only posture and then calculate durations at HTML.
         except RqlError as e:
             return Response(json.dumps({"message": "Error occurred!", "error": e.message}), status=500, content_type="application/json")
         finally:
-            cursorAll.close()
+            cursorChange.close()
+            app.rdb_conn.close()
+
+    return Response(response=events(), status=200, content_type='text/event-stream')
+
+
+# route to get all daily posture average (neck/torso) of each user (Posture stats) (event streaming)
+@app.route("/realtime/average/<userId>", methods=["GET"])
+def getRealtimePostureAvg(userId):
+    def events():
+        try:
+            result = r.table("logs_rt_daily").filter(
+                              (r.row["userId"] == userId) # & (r.row["Timestamp"].match("^2022-04-13.*$")) # test
+                          ).pluck("torso_inclination", "neck_inclination").map(lambda doc: {
+                            "total_torso": doc["torso_inclination"],
+                            "total_neck": doc["neck_inclination"],
+                            "count": 1
+                          }).reduce(lambda left, right: {
+                            "total_torso": (left["total_torso"] + right["total_torso"]),
+                            "total_neck": (left["total_neck"] + right["total_neck"]),
+                            "count": (left["count"] + right["count"])
+                          }).do(lambda res: {
+                            "avg_torso": (res["total_torso"] / res["count"]),
+                            "avg_neck": (res["total_neck"] / res["count"]),
+                            "total_count": res["count"]  
+                          }).run(app.rdb_conn)
+            
+            yield f"data: {json.dumps(result)}" + "\n\n"  # format -> data: {"avg_neck": 45.11833333333333, "avg_torso": 42.59166666666667, "total_count": 6}
+            
+            cursorChange = r.table("logs_rt_daily").get_all(userId, index="userId").pluck("torso_inclination", "neck_inclination").changes().run(app.rdb_conn)
+            for doc in cursorChange:
+                # format -> data: {"new_val": {"neck_inclination": 17.11, "torso_inclination": 32.36}, "old_val": null}
+                yield f"data: {json.dumps(doc)}" + "\n\n" # yield only posture details and then calculate durations at HTML.
+        except RqlError as e:
+            return Response(json.dumps({"message": "Error occurred!", "error": e.message}), status=500, content_type="application/json")
+        finally:
+            cursorChange.close()
+            app.rdb_conn.close()
+
+    return Response(response=events(), status=200, content_type='text/event-stream')\
+
+
+def transformCauseKey(doc):
+    doc["cause"] = doc["group"]
+    doc["count"] = doc["reduction"]
+    doc.pop("group")
+    doc.pop("reduction")
+    return doc
+
+@app.route("/realtime/cause/<userId>", methods=["GET"])
+def getRealtimeCause(userId):
+    def events():
+        try:
+            result = list(r.table("logs_rt_daily").filter(
+                              (r.row["userId"] == userId) & (r.row["Timestamp"].match("^2022-04-13.*$")) # test
+                          ).group("why_bad").count().ungroup().run(app.rdb_conn))
+            
+            result = list(map(transformCauseKey, result))
+            # format -> data: [{"cause": null, "count": 1}, {"cause": "both", "count": 1}, {"cause": "neck", "count": 1}, {"cause": "torso", "count": 3}]
+            yield f"data: {json.dumps(result)}" + "\n\n"
+
+            cursorChange = r.table("logs_rt_daily").get_all(userId, index="userId").pluck("why_bad").changes().run(app.rdb_conn)
+            for doc in cursorChange:
+                # format -> data: {"new_val": {"why_bad": "torso"}, "old_val": null}
+                yield f"data: {json.dumps(doc)}" + "\n\n" # yield only posture and then calculate durations at HTML.
+        except RqlError as e:
+            return Response(json.dumps({"message": "Error occurred!", "error": e.message}), status=500, content_type="application/json")
+        finally:
             cursorChange.close()
             app.rdb_conn.close()
 
@@ -120,7 +251,7 @@ def transformAndMinToHourOfDayOfWeekly(doc):
     doc.pop("reduction")
     return doc
 
-# TODO:
+
 # route to get weekly necessary data of each user for weekly graph (req/res)
 @app.route("/api/dash/weekly/<userId>", methods=["GET"])
 def getWeeklyData(userId):
