@@ -111,7 +111,7 @@ function Camerat() {
                             <p className="text-center text-gray-600 text-sm mt-2 mb-6">Greetings! Get ready to transform your posture and elevate your confidence!</p>
                             <div className="grid grid-flow-row sm:grid-flow-col gap-6">
                                 <div className="flex flex-col items-center sm:col-span-2">
-                                    <img className="w-[780px]" src="https://i.pinimg.com/originals/6c/24/94/6c24940d3a1c60ba85c475b937ab70ff.gif" alt="Posture Feed" />
+                                    <img className="w-[700px]" src="https://cdn.dribbble.com/users/1013040/screenshots/4398776/comp-15.gif" alt="Posture Feed" />
                                     <button class="mt-4 bg-gray-300 hover:bg-gray-400 transition duration-150 ease-in-out text-gray-800 font-bold py-2 px-10 rounded"
                                         disabled={isCameraOn} onClick={handleStartClick}>
                                         Start
