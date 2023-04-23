@@ -1,4 +1,4 @@
-from flask import Flask, Response, request, url_for, jsonify, abort
+from flask import Flask, Response, request, url_for, jsonify, abort, render_template
 from rethinkdb import r
 from rethinkdb.errors import RqlError, RqlRuntimeError, RqlDriverError
 import json
@@ -7,20 +7,14 @@ import datetime
 app = Flask(__name__)
 app.config.from_object(__name__)
 # HOST_DB = "172.31.29.127" # private IP
-HOST_DB = "13.215.50.151" # private IP
+HOST_DB = "13.213.45.157" # private IP
 
-
-@app.before_request
-def before_request():
-    try:
-        app.rdb_conn = r.connect(host=HOST_DB, port=28015, db="posedee")
-    except RqlDriverError:
-        abort(503, "No database connection could be established.")
-
+# TODO: use private connection
 # index route
 @app.route("/")
 def index():
-    return Response("Yo! stranger", content_type="text/plain")
+    # return Response("Yo! stranger", content_type="text/plain")
+    return render_template("index.html", userId="ue781dzdc")
 
 
 
@@ -32,17 +26,20 @@ def index():
 @app.route("/api/users", methods=["POST"])
 def add_users():
     try:
+        # create connection
+        conn = r.connect(host=HOST_DB, port=28015, db="posedee")
+        
         data = request.get_json()
         if not list(
-            r.table("users").get_all(data["userId"], index="userId").run(app.rdb_conn)
+            r.table("users").get_all(data["userId"], index="userId").run(conn)
         ):
-            r.table("users").insert(data).run(app.rdb_conn)
+            r.table("users").insert(data).run(conn)
             return Response(json.dumps({"message": "Insert successful"}), status=200, content_type="application/json")
         return Response(json.dumps({"message": "Check done!, User has already in."}), status=200, content_type="application/json")
     except RqlError as e:
         return Response(json.dumps({"message": "Error occurred!", "error": e.message}), status=500, content_type="application/json")
     finally:
-        app.rdb_conn.close()
+        conn.close()
 
 
 
@@ -55,6 +52,9 @@ def add_users():
 @app.route("/api/db/daily", methods=["POST"])
 def realtimeProgressPost():
     try:
+        # create connection
+        conn = r.connect(host=HOST_DB, port=28015, db="posedee")
+        
         data = request.get_json()
         neck = float(data.get("neck_inclination"))
         torso = float(data.get("torso_inclination"))
@@ -76,12 +76,12 @@ def realtimeProgressPost():
             data["why_bad"] = "both"
 
         
-        r.table("logs_rt_daily").insert(data).run(app.rdb_conn)
+        r.table("logs_rt_daily").insert(data).run(conn)
         return Response(json.dumps({"message": "Insert successful"}), status=200, content_type="application/json")
     except RqlError as e:
         return Response(json.dumps({"message": "Error occurred!", "error": e.message}), status=500, content_type="application/json")
     finally:
-        app.rdb_conn.close()
+        conn.close()
         
         
 def transformAndMinToHourOfDay(doc):
@@ -96,6 +96,9 @@ def transformAndMinToHourOfDay(doc):
 @app.route("/api/dash/hourly/<userId>", methods=["GET"])
 def getHourlyData(userId):
     try:
+        # create connection
+        conn = r.connect(host=HOST_DB, port=28015, db="posedee")
+        
         hourlyList = list(r.table("logs_rt_daily")
                           .filter(
                               (r.row["userId"] == userId) # & (r.row["Timestamp"].match("^2022-04-03.*$")) # test
@@ -103,7 +106,7 @@ def getHourlyData(userId):
                           .group("Hour", "Posture")
                           .count()
                           .ungroup()
-                          .run(app.rdb_conn))
+                          .run(conn))
         
         result = list(map(transformAndMinToHourOfDay, hourlyList))
         # print(hourlyList)
@@ -111,7 +114,7 @@ def getHourlyData(userId):
     except RqlError as e:
         return Response(json.dumps({"message": "Error occurred!", "error": e.message}), status=500, content_type="application/json")
     finally:
-        app.rdb_conn.close()
+        conn.close()
 
 
 def transformGaugeColumnName(doc):
@@ -125,6 +128,9 @@ def transformGaugeColumnName(doc):
 @app.route("/api/dash/gauge/<userId>", methods=["GET"])
 def getGaugeData(userId):
     try:
+        # create connection
+        conn = r.connect(host=HOST_DB, port=28015, db="posedee")
+        
         result = list(r.table("logs_rt_daily")
                           .filter(
                               (r.row["userId"] == userId) # & (r.row["Timestamp"].match("^2022-04-13.*$")) # test
@@ -132,7 +138,7 @@ def getGaugeData(userId):
                           .group("Posture")
                           .count()
                           .ungroup()
-                          .run(app.rdb_conn))
+                          .run(conn))
         
         result = list(map(transformGaugeColumnName, result))
         # print(result)
@@ -141,40 +147,55 @@ def getGaugeData(userId):
     except RqlError as e:
         return Response(json.dumps({"message": "Error occurred!", "error": e.message}), status=500, content_type="application/json")
     finally:
-        app.rdb_conn.close()
+        conn.close()
 
+
+@app.route("/api/request/progress/<userId>", methods=["GET"])
+def getReqProgress(userId):
+    try:
+        # create connection
+        conn = r.connect(host=HOST_DB, port=28015, db="posedee")
+        
+        result = list(r.table("logs_rt_daily").filter(
+                            (r.row["userId"] == userId) # & (r.row["Timestamp"].match("^2022-04-13.*$")) # test
+                        ).group("Posture").count().ungroup().run(conn))
+        
+        result = list(map(transformGaugeColumnName, result))
+        # format -> data: [{"Posture": 0, "Count": 0.0}, {"Posture": 1, "Count": 0.0}]
+        return Response(json.dumps(result), status=200, content_type="application/json")
+    except RqlError as e:
+        return Response(json.dumps({"message": "Error occurred!", "error": e.message}), status=500, content_type="application/json")
+    finally:
+        conn.close()
 
 # route to get all daily posture durations of each user (Bank's duration display) (event streaming)
-@app.route("/realtime/progress/<userId>", methods=["GET"])
+@app.route("/api/realtime/progress/<userId>", methods=["GET"])
 def getRealtimeProgress(userId):
     def events():
         try:
-            result = list(r.table("logs_rt_daily").filter(
-                              (r.row["userId"] == userId) # & (r.row["Timestamp"].match("^2022-04-13.*$")) # test
-                          ).group("Posture").count().ungroup().run(app.rdb_conn))
-            
-            result = list(map(transformGaugeColumnName, result))
-            yield f"data: {json.dumps(result)}" + "\n\n" # format -> data: [{"Posture": 0, "Count": 0.0}, {"Posture": 1, "Count": 0.0}]
-                
-            cursorChange = r.table("logs_rt_daily").get_all(userId, index="userId").pluck("Posture").changes().run(app.rdb_conn)
+            # create connection
+            conn = r.connect(host=HOST_DB, port=28015, db="posedee")
+                 
+            cursorChange = r.table("logs_rt_daily").filter((r.row["userId"] == userId)).pluck("Posture").changes().run(conn)
             for doc in cursorChange:
                 # format -> data: {"new_val": {"Posture": 0}, "old_val": null}
                 yield f"data: {json.dumps(doc)}" + "\n\n" # yield only posture and then calculate durations at HTML.
         except RqlError as e:
             return Response(json.dumps({"message": "Error occurred!", "error": e.message}), status=500, content_type="application/json")
-        finally:
-            cursorChange.close()
-            app.rdb_conn.close()
+        # finally:
+        #     cursorChange.close()
+        #     conn.close()
 
     return Response(response=events(), status=200, content_type='text/event-stream')
 
 
-# route to get all daily posture average (neck/torso) of each user (Posture stats) (event streaming)
-@app.route("/realtime/average/<userId>", methods=["GET"])
-def getRealtimePostureAvg(userId):
-    def events():
-        try:
-            result = r.table("logs_rt_daily").filter(
+@app.route("/api/request/average/<userId>", methods=["GET"])
+def getReqPostureAvg(userId):
+    try:
+        # create connection
+        conn = r.connect(host=HOST_DB, port=28015, db="posedee")
+        
+        result = r.table("logs_rt_daily").filter(
                               (r.row["userId"] == userId) # & (r.row["Timestamp"].match("^2022-04-13.*$")) # test
                           ).pluck("torso_inclination", "neck_inclination").map(lambda doc: {
                             "total_torso": doc["torso_inclination"],
@@ -188,21 +209,34 @@ def getRealtimePostureAvg(userId):
                             "avg_torso": (res["total_torso"] / res["count"]),
                             "avg_neck": (res["total_neck"] / res["count"]),
                             "total_count": res["count"]  
-                          }).run(app.rdb_conn)
+                          }).run(conn)
             
-            yield f"data: {json.dumps(result)}" + "\n\n"  # format -> data: {"avg_neck": 45.11833333333333, "avg_torso": 42.59166666666667, "total_count": 6}
+        # format -> data: {"avg_neck": 45.11833333333333, "avg_torso": 42.59166666666667, "total_count": 6}
+        return Response(json.dumps(result), status=200, content_type="application/json")
+    except RqlError as e:
+            return Response(json.dumps({"message": "Error occurred!", "error": e.message}), status=500, content_type="application/json")
+    finally:
+        conn.close()
+
+# route to get all daily posture average (neck/torso) of each user (Posture stats) (event streaming)
+@app.route("/api/realtime/average/<userId>", methods=["GET"])
+def getRealtimePostureAvg(userId):
+    def events():
+        try:
+            # create connection
+            conn = r.connect(host=HOST_DB, port=28015, db="posedee")
             
-            cursorChange = r.table("logs_rt_daily").get_all(userId, index="userId").pluck("torso_inclination", "neck_inclination").changes().run(app.rdb_conn)
+            cursorChange = r.table("logs_rt_daily").filter((r.row["userId"] == userId)).pluck("torso_inclination", "neck_inclination").changes().run(conn)
             for doc in cursorChange:
                 # format -> data: {"new_val": {"neck_inclination": 17.11, "torso_inclination": 32.36}, "old_val": null}
                 yield f"data: {json.dumps(doc)}" + "\n\n" # yield only posture details and then calculate durations at HTML.
         except RqlError as e:
             return Response(json.dumps({"message": "Error occurred!", "error": e.message}), status=500, content_type="application/json")
-        finally:
-            cursorChange.close()
-            app.rdb_conn.close()
+        # finally:
+        #     cursorChange.close()
+        #     conn.close()
 
-    return Response(response=events(), status=200, content_type='text/event-stream')\
+    return Response(response=events(), status=200, content_type='text/event-stream')
 
 
 def transformCauseKey(doc):
@@ -212,28 +246,42 @@ def transformCauseKey(doc):
     doc.pop("reduction")
     return doc
 
+@app.route("/api/request/cause/<userId>", methods=["GET"])
+def getReqCause(userId):
+    try:
+        # create connection
+        conn = r.connect(host=HOST_DB, port=28015, db="posedee")
+        
+        result = list(r.table("logs_rt_daily").filter(
+                            (r.row["userId"] == userId) # & (r.row["Timestamp"].match("^2022-04-13.*$")) # test
+                        ).group("why_bad").count().ungroup().run(conn))
+        
+        result = list(map(transformCauseKey, result))
+        # format -> data: [{"cause": null, "count": 1}, {"cause": "both", "count": 1}, {"cause": "neck", "count": 1}, {"cause": "torso", "count": 3}]
+        return Response(json.dumps(result), status=200, content_type="application/json")
+    except RqlError as e:
+            return Response(json.dumps({"message": "Error occurred!", "error": e.message}), status=500, content_type="application/json")
+    finally:
+        conn.close()
+
+
 # route to get all daily main bad posture cause of each user (event streaming)
-@app.route("/realtime/cause/<userId>", methods=["GET"])
+@app.route("/api/realtime/cause/<userId>", methods=["GET"])
 def getRealtimeCause(userId):
     def events():
         try:
-            result = list(r.table("logs_rt_daily").filter(
-                              (r.row["userId"] == userId) # & (r.row["Timestamp"].match("^2022-04-13.*$")) # test
-                          ).group("why_bad").count().ungroup().run(app.rdb_conn))
+            # create connection
+            conn = r.connect(host=HOST_DB, port=28015, db="posedee")
             
-            result = list(map(transformCauseKey, result))
-            # format -> data: [{"cause": null, "count": 1}, {"cause": "both", "count": 1}, {"cause": "neck", "count": 1}, {"cause": "torso", "count": 3}]
-            yield f"data: {json.dumps(result)}" + "\n\n"
-
-            cursorChange = r.table("logs_rt_daily").get_all(userId, index="userId").pluck("why_bad").changes().run(app.rdb_conn)
+            cursorChange = r.table("logs_rt_daily").filter((r.row["userId"] == userId)).pluck("why_bad").changes().run(conn)
             for doc in cursorChange:
                 # format -> data: {"new_val": {"why_bad": "torso"}, "old_val": null}
                 yield f"data: {json.dumps(doc)}" + "\n\n" # yield only posture and then calculate durations at HTML.
         except RqlError as e:
             return Response(json.dumps({"message": "Error occurred!", "error": e.message}), status=500, content_type="application/json")
-        finally:
-            cursorChange.close()
-            app.rdb_conn.close()
+        # finally:
+        #     cursorChange.close()
+        #     conn.close()
 
     return Response(response=events(), status=200, content_type='text/event-stream')
 
@@ -257,6 +305,9 @@ def transformAndMinToHourOfDayOfWeekly(doc):
 @app.route("/api/dash/weekly/<userId>", methods=["GET"])
 def getWeeklyData(userId):
     try:
+        # create connection
+        conn = r.connect(host=HOST_DB, port=28015, db="posedee")
+        
         currentWeek = datetime.datetime.now().isocalendar().week
         # currentWeek = 21 # test
         
@@ -267,14 +318,14 @@ def getWeeklyData(userId):
                             .group("Day","Day_Name", "Posture")
                             .count()
                             .ungroup()
-                            .run(app.rdb_conn))
+                            .run(conn))
         result = list(map(transformAndMinToHourOfDayOfWeekly, weeklyList))
         # print(weeklyList)
         return Response(json.dumps(result), status=200, content_type="application/json")
     except RqlError as e:
         return Response(json.dumps({"message": "Error occurred!", "error": e.message}), status=500, content_type="application/json")
     finally:
-        app.rdb_conn.close()
+        conn.close()
 
 
 def transformAndMinToHourOfDayOfMonthly(doc):
@@ -290,6 +341,9 @@ def transformAndMinToHourOfDayOfMonthly(doc):
 @app.route("/api/dash/monthly/<userId>", methods=["GET"])
 def getMonthlyData(userId):
     try:
+        # create connection
+        conn = r.connect(host=HOST_DB, port=28015, db="posedee")
+        
         currentMonth = datetime.datetime.now().month
         # currentMonth = 6 # test
         
@@ -300,14 +354,14 @@ def getMonthlyData(userId):
                             .group("Day", "Posture")
                             .count()
                             .ungroup()
-                            .run(app.rdb_conn))
+                            .run(conn))
         result = list(map(transformAndMinToHourOfDayOfMonthly, monthlyList))
         # print(monthlyList)
         return Response(json.dumps(result), status=200, content_type="application/json")
     except RqlError as e:
         return Response(json.dumps({"message": "Error occurred!", "error": e.message}), status=500, content_type="application/json")
     finally:
-        app.rdb_conn.close()
+        conn.close()
 
 
 def transformAndMinToHourOfMonth(doc):
@@ -322,6 +376,9 @@ def transformAndMinToHourOfMonth(doc):
 @app.route("/api/dash/yearly/<userId>", methods=["GET"])
 def getYearlyData(userId):
     try:
+        # create connection
+        conn = r.connect(host=HOST_DB, port=28015, db="posedee")
+        
         currentYear = datetime.datetime.now().year
         # currentYear = 2022 # test
         
@@ -331,7 +388,7 @@ def getYearlyData(userId):
                           .group("Month","Posture")
                           .count()
                           .ungroup()
-                          .run(app.rdb_conn))
+                          .run(conn))
 
         result = list(map(transformAndMinToHourOfMonth, yearlyList))
         # print(yearlyList)
@@ -339,7 +396,7 @@ def getYearlyData(userId):
     except RqlError as e:
         return Response(json.dumps({"message": "Error occurred!", "error": e.message}), status=500, content_type="application/json")
     finally:
-        app.rdb_conn.close()
+        conn.close()
 
 
 if __name__ == "__main__":
