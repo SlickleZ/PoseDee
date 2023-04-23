@@ -26,10 +26,12 @@ export const DateTime = () => {
     day: 'numeric',
   });
 
+  const isAM = date.getHours() < 12; // Check if it's AM or PM
+
   return (
     <div>
-      <p className= "mt-3 mb-5 font-bold">
-        Clock: {formattedTime} | {formattedDate}
+      <p className= "text-center subpixel-antialiased mt-2 mb-10 text-2xl font-bold">
+      {formattedDate}  {isAM ? '☀️' : '🌙'} {formattedTime} 
       </p>
     </div>
   );

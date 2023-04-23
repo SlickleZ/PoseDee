@@ -17,10 +17,10 @@ export default function AppNavBar() {
   };
 
     const initialState = [
-      { name: "Posture Overviews", href: "/app", current: true },
-      { name: "Tracking System", href: "/track", current: false },
+      { name: "Tracking System", href: "/track", current: true },
       { name: "FAQ", href: "/faq", current: false },
-      { name: "Our Approach", href: "https://github.com/SlickleZ/PoseDee", current: false, target: "_blank" },
+      { name: "Posture Overviews", href: "#", current: false},
+      { name: "Our Approach", href: "#", current: false},
     ];
   
     const [navigation, setNavigation] = useState(() => {
@@ -33,9 +33,23 @@ export default function AppNavBar() {
     }, [navigation]);
   
     const handleClick = (index) => {
+      if (index === 2) {
+        window.open("https://github.com/SlickleZ/");
+        return; // do nothing if index 2 is clicked
+      }
       if (index === 3) {
+        window.open("https://github.com/SlickleZ/PoseDee");
         return; // do nothing if index 3 is clicked
       }
+      
+      fetch('/stop_camera')
+      .then(() => {
+          setIsCameraOn(false);
+          localStorage.setItem('isCameraOn', false);
+          // window.location.reload(false);
+      })
+      .catch(console.error);
+
       setNavigation((prevState) =>
         prevState.map((item, i) =>
           i === index ? { ...item, current: true } : { ...item, current: false }
@@ -71,7 +85,7 @@ export default function AppNavBar() {
                 <div className="flex h-15 items-center justify-between">
                   {/* <div className="flex items-center"> */}
                   {/* Have to click multiple times to change current values --fixed*/}
-                  <Link onClick={() => {handleClick(0); window.location.href="/app";}}>
+                  <Link onClick={() => {handleClick(0); window.location.href="/track";}}>
                     <div className="py-1 flex-shrink-0 items-center">
                         <lord-icon
                           src="https://cdn.lordicon.com/zlyxhzar.json"
@@ -83,13 +97,15 @@ export default function AppNavBar() {
                     </div>
                     </Link>
                     <div className="hidden md:block">
-                      <div className="ml-10 flex items-baseline space-x-4">
+                      <div className="ml-10 flex items-baseline space-x-4 myClickable">
                         {navigation.map((item,index) => (
                           <a
                             key={item.name}
                             // href={item.href}
-                            target={item.target}
-                            onClick={() => {handleClick(index); window.location.href=item.href;}}
+                            // target={item.target}
+                            onClick={() => {handleClick(index); 
+                              window.location.href=item.href;
+                            }}
                             className={classNames(
                               item.current
                                 ? "bg-gray-900 text-white"
@@ -97,8 +113,6 @@ export default function AppNavBar() {
                               "rounded-md px-3 py-2 text-sm font-medium"
                             )}
                             aria-current={item.current ? "page" : undefined}
-                            //Onclick....
-                            
                           >
                             {item.name}
                           </a>
@@ -160,7 +174,7 @@ export default function AppNavBar() {
                                 {({ active }) => (
                                   <a
                                     href={item.href}
-                                    target={item.target}
+                                    // target={item.target}
                                     onClick={() => {
                                       RemoveCookie();
                                       localStorage.clear();
@@ -203,13 +217,13 @@ export default function AppNavBar() {
               </div>
 
               <Disclosure.Panel className="md:hidden">
-                <div className="space-y-1 px-2 pt-2 pb-3 sm:px-3">
+                <div className="space-y-1 px-2 pt-2 pb-3 sm:px-3 myClickable">
                   {navigation.map((item,index) => (
                     <Disclosure.Button
                       key={item.name}
                       as="a"
                       onClick={() => {handleClick(index); window.location.href=item.href;}}
-                      target={item.target}
+                      // target={item.target}
                       // href={item.href}
                       className={classNames(
                         item.current
