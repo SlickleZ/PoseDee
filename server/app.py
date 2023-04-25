@@ -3,18 +3,16 @@ from rethinkdb import r
 from rethinkdb.errors import RqlError, RqlRuntimeError, RqlDriverError
 import json
 import datetime
+import os
 
 app = Flask(__name__)
 app.config.from_object(__name__)
-# HOST_DB = "172.31.29.127" # private IP
-HOST_DB = "13.213.45.157" # private IP
+HOST_DB = os.getenv("HOST_DB") # private IP
 
-# TODO: use private connection
 # index route
 @app.route("/")
 def index():
-    # return Response("Yo! stranger", content_type="text/plain")
-    return render_template("index.html", userId="ue781dzdc")
+    return Response("Yo! stranger", content_type="text/plain")
 
 
 
