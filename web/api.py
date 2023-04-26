@@ -12,8 +12,11 @@ import math as m
 import mediapipe as mp
 import pyttsx3
 import threading
+import os
 
 from flask import Response
+
+HOST_API = os.getenv("HOST_API") # private IP of api server
 
 app = Flask(__name__)
 app.secret_key = "-.SHEPHERD.-"  #it is necessary to set a password when dealing with OAuth 2.0
@@ -64,13 +67,23 @@ def callback():
         request = token_request,
         audience = GOOGLE_CLIENT_ID
     )
-    
+
 #TODO -> ไปเก็บในหลังบ้านเเทน session + ควรเก็บเเต่ google id ด้วย
 
-    session["google_id"] = id_info.get("sub")  #defing the results to show on the page
+    session["google_id"] = id_info.get("sub")  #define the results to show on the page
     session["name"] = id_info.get("name")
-    session["email"] = id_info.get("email")  #defing the results to show on the page
+    session["email"] = id_info.get("email")  #define the results to show on the page
     session["picture"] = id_info.get("picture")
+
+    body = {
+        "userId": session["google_id"],
+        "email": session["email"],
+        "name": session["name"]
+    }
+    headers = {'Content-Type': 'application/json'}
+
+    requests.post(f"http://{HOST_API}:5000/api/users", json=body, headers=headers)
+
     # เพื่อเปลี่ยนเเปลงค่า proxy ของเว็ปให้เป็นฝั่ง client จาก server
     return redirect(f"http://localhost:3001/callback?name={session['name']}&email={session['email']}&picture={session['picture']}")  #the final page where the authorized users will end up
 
@@ -305,4 +318,4 @@ def stop_camera():
     return 'Camera stopped'
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
