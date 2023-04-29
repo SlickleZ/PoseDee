@@ -39,7 +39,7 @@
 
   <script>
       var id = {{ userId | tojson }};
-      var HOST_API = "13.250.3.177";
+      var HOST_API = "52.221.194.123";
 
       var goodSec = 0, badSec = 0;
       var torsoAvg = 0.0, neckAvg = 0.0, avgTotalCount = 0;
@@ -90,7 +90,7 @@
         if (significantCause.cause === null || significantCause.count === 0) {
           document.getElementById('myCause').innerText = "No significant problems detected.";
         } else {
-          document.getElementById('myCause').innerText = significantCause.cause;
+          document.getElementById('myCause').innerText = significantCause.cause.charAt(0).toUpperCase() + significantCause.cause.slice(1);
         }
         
       });
@@ -165,7 +165,7 @@
           if (significantCause.cause === null || significantCause.count === 0) {
             document.getElementById('myCause').innerText = "No significant problems detected.";
           } else {
-            document.getElementById('myCause').innerText = significantCause.cause;
+            document.getElementById('myCause').innerText = significantCause.cause.charAt(0).toUpperCase() + significantCause.cause.slice(1);
           }
         }
       }
