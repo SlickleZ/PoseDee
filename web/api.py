@@ -13,6 +13,7 @@ import mediapipe as mp
 import pyttsx3
 import threading
 import os
+import datetime
 
 from flask import Response
 
@@ -68,13 +69,13 @@ def callback():
         audience = GOOGLE_CLIENT_ID
     )
 
-#TODO -> ไปเก็บในหลังบ้านเเทน session + ควรเก็บเเต่ google id ด้วย
+# -> ไปเก็บในหลังบ้านเเทน session + ควรเก็บเเต่ google id ด้วย
 
     session["google_id"] = id_info.get("sub")  #define the results to show on the page
     session["name"] = id_info.get("name")
     session["email"] = id_info.get("email")  #define the results to show on the page
     session["picture"] = id_info.get("picture")
-
+    
     body = {
         "userId": session["google_id"],
         "email": session["email"],
@@ -85,7 +86,7 @@ def callback():
     requests.post(f"http://{HOST_API}:5000/api/users", json=body, headers=headers)
 
     # เพื่อเปลี่ยนเเปลงค่า proxy ของเว็ปให้เป็นฝั่ง client จาก server
-    return redirect(f"http://localhost:3001/callback?name={session['name']}&email={session['email']}&picture={session['picture']}")  #the final page where the authorized users will end up
+    return redirect(f"http://localhost:3001/callback?name={session['name']}&email={session['email']}&picture={session['picture']}&userId={session['google_id']}")  #the final page where the authorized users will end up
 
 @app.route("/logout")  #the logout page and function
 def logout():
@@ -126,7 +127,7 @@ pose = mp_pose.Pose()
 #camera -> founded issue: zsh: segmentation fault  npm run start-api (sometimes)
 is_camera_running = False
 
-def generate_frames():
+def generate_frames(userId):
     global is_camera_running
     
     # Meta.
@@ -138,8 +139,22 @@ def generate_frames():
     # Initilize frame counters.
     good_frames = 0
     bad_frames = 0
-
+    
+    postBody = {}
+    
+    def send_data():
+        headers = {'Content-Type': 'application/json'}
+        
+        # print(f"{time.strftime('%X')}: Sending {postBody}")
+        requests.post(f"http://{HOST_API}:5000/api/db/daily", json=postBody, headers=headers)
+        # print("Sended!")
+        
+        
+    daemon = threading.Thread(target=send_data, daemon=True, name='sending')
+    prevTime = time.time()
+    
     while is_camera_running:
+        currentTime = time.time()
         success, image = camera.read()
         if not success:
             break
@@ -272,14 +287,27 @@ def generate_frames():
                     cv2.putText(image, time_string_bad,
                                 (10, h - 20), font, 0.9, red, 2)
                         
+                if currentTime - prevTime > 1:
+                    prevTime = currentTime
 
+                    postBody["Timestamp"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    postBody["neck_inclination"] = float(neck_inclination)
+                    postBody["torso_inclination"] = float(torso_inclination)
+                    postBody["Offset"] = float(offset)
+                    postBody["Posture"] = 1 if good_time >= bad_time else 0
+                    postBody["Side_Aligned"] = 1 if offset < 100 else 0
+                    postBody["userId"] = userId
+                    
+                    daemon.start()
+                    daemon = threading.Thread(target=send_data, daemon=True, name='sending')
+                
                 ret, buffer = cv2.imencode('.jpg', image)
                 frame = buffer.tobytes()
                 
                 yield (b'--frame\r\n'
                     b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
             else:
-                print(" ค่า defualt ")
+                print(" ค่า default ")
                 good_frames = 0
                 bad_frames = 0
                 success, frame = camera.read()
@@ -287,7 +315,6 @@ def generate_frames():
                     break
                 else:
                     if lm is not None:
-                        
                         break
                     else:
                         ret, buffer = cv2.imencode('.jpg', frame)
@@ -296,9 +323,10 @@ def generate_frames():
                             b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
                 continue
             
-@app.route('/video_feed')
+@app.route('/video_feed', methods=["GET"])
 def video_feed():
-    return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+    userId = request.args.get("user_id")
+    return Response(generate_frames(userId), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/start_camera')
 def start_camera():

@@ -10,7 +10,7 @@ function Camerat() {
 
     useEffect(() => {
         if (isCameraOn) {
-            setImageUrl('/video_feed');
+            setImageUrl('/video_feed?user_id=' + JSON.parse(userinfo).id);
             document.title = 'PoseDee | Tracking (On)';
         } else {
             setImageUrl('');

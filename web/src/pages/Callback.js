@@ -14,6 +14,7 @@ function Callback() {
     const [userinfo, setUserInfo] = useCookie('userinfo', '');
     useEffect(()=>{
         setUserInfo(JSON.stringify({
+            id: query.get("userId"),
             name: query.get("name"),
             email: query.get("email"),
             picture: query.get("picture")
