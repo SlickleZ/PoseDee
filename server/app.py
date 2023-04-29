@@ -307,11 +307,12 @@ def getWeeklyData(userId):
         conn = r.connect(host=HOST_DB, port=28015, db="posedee")
         
         currentWeek = datetime.datetime.now().isocalendar().week
+        currentYear = datetime.datetime.now().year
         # currentWeek = 21 # test
         
         weeklyList = list(r.table("logs_summary")
                             .filter(
-                                (r.row["userId"] == userId) & (r.row["Week"] == currentWeek)
+                                (r.row["userId"] == userId) & (r.row["Week"] == currentWeek) & (r.row["Year"] == currentYear)
                             )
                             .group("Day","Day_Name", "Posture")
                             .count()
@@ -343,11 +344,12 @@ def getMonthlyData(userId):
         conn = r.connect(host=HOST_DB, port=28015, db="posedee")
         
         currentMonth = datetime.datetime.now().month
+        currentYear = datetime.datetime.now().year
         # currentMonth = 6 # test
         
         monthlyList = list(r.table("logs_summary")
                             .filter(
-                                (r.row["userId"] == userId) & (r.row["Month"] == currentMonth)
+                                (r.row["userId"] == userId) & (r.row["Month"] == currentMonth) & (r.row["Year"] == currentYear)
                             )
                             .group("Day", "Posture")
                             .count()
