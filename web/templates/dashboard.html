@@ -5,7 +5,7 @@
         <meta charset="utf-8" />
     </head>
     <body onbeforeunload="closeEventSources()">
-        <h1 style="text-align: center"> Realtime Stat Simulator </h1>
+        <h1 style="text-align: center">Realtime Stat Simulator</h1>
         <h3 style="text-align: center">Good/Bad Durations</h3>
         <p style="text-align: center" id="myGoodDuration" width="400" height="400"></p>
         <p style="text-align: center" id="myBadDuration" width="400" height="400"></p>
@@ -13,7 +13,9 @@
         <p style="text-align: center" id="myTorsoAverage" width="400" height="400"></p>
         <p style="text-align: center" id="myNeckAverage" width="400" height="400"></p>
         <h3 style="text-align: center" >Bad posture cause</h3>
-        <p style="text-align: center" id="myCause" width="400" height="400"></p> 
+        <p style="text-align: center" id="myCause" width="400" height="400"></p>
+        <h1>Daily Good Posture Percentage</h1>
+        {{ fig5|safe }}
         <h1>Daily Stack Bar Chart</h1>
         {{ fig1|safe }}
         <h1>Weekly Stack Bar Chart</h1>
@@ -22,8 +24,6 @@
         {{ fig3|safe }}
         <h1>Yearly Stack Bar Chart</h1>
         {{ fig4|safe }}
-        <h1>Daily Good Posture Percentage</h1>
-        {{ fig5|safe }}
     </body>
 
 
@@ -38,8 +38,8 @@
   </script>  
 
   <script>
-      var id = {{ userId | tojson }}; // ue781dzdc
-      var HOST_API = "18.140.3.143";
+      var id = {{ userId | tojson }};
+      var HOST_API = "13.250.3.177";
 
       var goodSec = 0, badSec = 0;
       var torsoAvg = 0.0, neckAvg = 0.0, avgTotalCount = 0;
@@ -74,7 +74,13 @@
         causeDoc = doc;
         // console.log(causeDoc)
 
-        document.getElementById('myCause').innerText = causeDoc.reduce((left, right) => left.count > right.count? left : right).cause;
+        let cause = causeDoc.reduce((left, right) => left.count > right.count? left : right).cause;
+        if (cause === null) {
+          document.getElementById('myCause').innerText = "No significant problems detected.";
+        } else {
+          document.getElementById('myCause').innerText = cause;
+        }
+        
       });
   </script>
 
@@ -143,7 +149,12 @@
             }
           }
           // console.log(causeDoc);
-          document.getElementById('myCause').innerText = causeDoc.reduce((left, right) => left.count > right.count? left : right).cause;
+          let cause = causeDoc.reduce((left, right) => left.count > right.count? left : right).cause;
+          if (cause === null) {
+            document.getElementById('myCause').innerText = "No significant problems detected.";
+          } else {
+            document.getElementById('myCause').innerText = cause;
+          }
         }
       }
   </script>

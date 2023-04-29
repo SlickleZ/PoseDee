@@ -34,7 +34,7 @@ export default function AppNavBar() {
   
     const handleClick = (index) => {
       if (index === 2) {
-        window.open("https://github.com/SlickleZ/");
+        window.open("http://127.0.0.1:5000/dashboard/" + JSON.parse(userinfo).id);
         return; // do nothing if index 2 is clicked
       }
       if (index === 3) {
