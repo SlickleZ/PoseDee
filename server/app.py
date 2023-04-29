@@ -1,4 +1,5 @@
 from flask import Flask, Response, request, url_for, jsonify, abort, render_template
+from flask_cors import CORS
 from rethinkdb import r
 from rethinkdb.errors import RqlError, RqlRuntimeError, RqlDriverError
 import json
@@ -7,6 +8,9 @@ import os
 
 app = Flask(__name__)
 app.config.from_object(__name__)
+CORS(app, resources={
+    r"/api/*": {"origins": "*"}
+})
 HOST_DB = os.getenv("HOST_DB") # private IP
 
 # index route
