@@ -224,13 +224,9 @@ def getReqPostureAvg(userId):
             .default({})
             .do(
                 lambda res: {
-                    "avg_torso": 0.00
-                    if (res["count"] and res["total_torso"])
-                    else res["total_torso"] / res["count"],
-                    "avg_neck": 0.00
-                    if (res["count"] and res["total_neck"])
-                    else res["total_neck"] / res["count"],
-                    "total_count": 0 if res["count"] else (res["count"]),
+                    "avg_torso": r.branch(res.has_fields('count') & res.has_fields('total_torso'), res["total_torso"] / res["count"], 0.00),
+                    "avg_neck": r.branch(res.has_fields('count') & res.has_fields('total_neck'), res["total_neck"] / res["count"], 0.00),
+                    "total_count": r.branch(res.has_fields('count'), res["count"], 0)
                 }
             )
             .run(conn)
