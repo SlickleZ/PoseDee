@@ -224,12 +224,12 @@ def getReqPostureAvg(userId):
             .default({})
             .do(
                 lambda res: {
-                    "avg_torso": float(0.00)
+                    "avg_torso": 0.00
                     if (res["count"] and res["total_torso"])
-                    else (res["total_torso"] / res["count"]),
-                    "avg_neck": float(0.00)
+                    else res["total_torso"] / res["count"],
+                    "avg_neck": 0.00
                     if (res["count"] and res["total_neck"])
-                    else (res["total_neck"] / res["count"]),
+                    else res["total_neck"] / res["count"],
                     "total_count": 0 if res["count"] else (res["count"]),
                 }
             )
