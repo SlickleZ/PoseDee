@@ -450,9 +450,12 @@ def gauge_dash(userId):
     dash6 =  pd.DataFrame(r.json(), columns=['Posture', 'Count'])
     dash6 = dash6.astype(dtype={'Posture': "int64", 'Count': "int64"})
 
-    good = int(dash6[dash6["Posture"] == 1]["Count"])
-    bad = int(dash6[dash6["Posture"] == 0]["Count"])
-    Good_Percentage =  round((good / (good + bad)) * 100, 2)
+    if dash6.empty:
+        Good_Percentage = 0.00
+    else:
+        good = int(dash6[dash6["Posture"] == 1]["Count"])
+        bad = int(dash6[dash6["Posture"] == 0]["Count"])
+        Good_Percentage =  round((good / (good + bad)) * 100, 2)
 
     if Good_Percentage <= 30:
         color = 'red'

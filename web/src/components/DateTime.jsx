@@ -31,7 +31,7 @@ export const DateTime = () => {
   return (
     <div>
       <p className= "text-center subpixel-antialiased mt-2 mb-10 text-2xl font-bold">
-      {formattedDate}  {isAM ? '☀️' : '🌙'} {formattedTime} 
+      {formattedDate}&nbsp;&nbsp;{formattedTime}&nbsp;{isAM ? '☀️' : '🌙'}
       </p>
     </div>
   );

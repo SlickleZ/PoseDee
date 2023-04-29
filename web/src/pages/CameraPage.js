@@ -3,10 +3,7 @@ import "../styles/App.css";
 import useCookie, { setCookie } from "react-use-cookie";
 import AppNavBar, { navigation } from "../components/AppNavBar";
 import ScrollToTopComp from "../components/ScrollToTopComp";
-import FAQ from "../components/FAQ";
 import Camerat from "../components/Camerat";
-import DateTime from "../components/DateTime";
-import AlertComp from "../components/AlertComp";
 
 const isObjectEmpty = (objectName) => {
   return Object.keys(objectName).length === 0;
