@@ -1,10 +1,46 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>My Posture Dashboards</title>
+        <title>PoseDee | Posture Overviews</title>
+        <link rel = "icon" href = "https://cdn4.iconfinder.com/data/icons/essentials-74/24/018_-_Chart-1024.png" >
         <meta charset="utf-8" />
+        <style>
+
+          #loader {
+            display: block;
+            position: fixed;
+            z-index: 999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            opacity: 0.8;
+          }
+      
+          #loader .spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 16px solid #f3f3f3;
+            border-top: 16px solid #3498db;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            animation: spin 2s linear infinite;
+          }
+      
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        </style>
     </head>
     <body onbeforeunload="closeEventSources()">
+      <div id="loader">
+        <div class="spinner"></div>
+      </div>
         <h1 style="text-align: center">Realtime Stat Simulator</h1>
         <h3 style="text-align: center">Good/Bad Durations</h3>
         <p style="text-align: center" id="myGoodDuration" width="400" height="400"></p>
@@ -24,6 +60,13 @@
         {{ fig3|safe }}
         <h1>Yearly Stack Bar Chart</h1>
         {{ fig4|safe }}
+
+        <script>
+          // Hide the loader after the page has finished loading
+          window.addEventListener('load', function() {
+            document.getElementById('loader').style.display = "none";
+          });
+        </script>
     </body>
 
 
@@ -39,7 +82,7 @@
 
   <script>
       var id = {{ userId | tojson }};
-      var HOST_API = "52.221.194.123";
+      var HOST_API = "54.254.148.80";
 
       var goodSec = 0, badSec = 0;
       var torsoAvg = 0.0, neckAvg = 0.0, avgTotalCount = 0;
