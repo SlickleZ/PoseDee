@@ -48,8 +48,14 @@
       fetch("http://"+ HOST_API +":5000/api/request/progress/" + id)
       .then((response) => response.json())
       .then((doc) => {
-        goodSec = doc[1].Count;
-        badSec = doc[0].Count;
+        if (doc.length === 0) {
+          goodSec = 0;
+          badSec = 0;
+        } else {
+          goodSec = doc[1].Count;
+          badSec = doc[0].Count;
+        }
+
         // console.log(goodSec, badSec);
 
         document.getElementById('myGoodDuration').innerText = "Good: " + toFormat(goodSec);
@@ -62,6 +68,7 @@
         torsoAvg = doc.avg_torso;
         neckAvg = doc.avg_neck;
         avgTotalCount = doc.total_count;
+
         // console.log(torsoAvg, neckAvg, avgTotalCount);
 
         document.getElementById('myTorsoAverage').innerText = "Torso: " + torsoAvg.toFixed(2);
@@ -71,14 +78,19 @@
       fetch("http://"+ HOST_API +":5000/api/request/cause/" + id)
       .then((response) => response.json())
       .then((doc) => {
-        causeDoc = doc;
+        if (doc.length === 0) {
+          causeDoc = [{"cause": null, "count": 0}, {"cause": "both", "count": 0}, {"cause": "neck", "count": 0}, {"cause": "torso", "count": 0}]
+        } else {
+          causeDoc = doc;
+        }
+        
         // console.log(causeDoc)
 
-        let cause = causeDoc.reduce((left, right) => left.count > right.count? left : right).cause;
-        if (cause === null) {
+        let significantCause = causeDoc.reduce((left, right) => left.count > right.count? left : right);
+        if (significantCause.cause === null || significantCause.count === 0) {
           document.getElementById('myCause').innerText = "No significant problems detected.";
         } else {
-          document.getElementById('myCause').innerText = cause;
+          document.getElementById('myCause').innerText = significantCause.cause;
         }
         
       });
@@ -149,11 +161,11 @@
             }
           }
           // console.log(causeDoc);
-          let cause = causeDoc.reduce((left, right) => left.count > right.count? left : right).cause;
-          if (cause === null) {
+          let significantCause = causeDoc.reduce((left, right) => left.count > right.count? left : right);
+          if (significantCause.cause === null || significantCause.count === 0) {
             document.getElementById('myCause').innerText = "No significant problems detected.";
           } else {
-            document.getElementById('myCause').innerText = cause;
+            document.getElementById('myCause').innerText = significantCause.cause;
           }
         }
       }

@@ -196,23 +196,46 @@ def getReqPostureAvg(userId):
     try:
         # create connection
         conn = r.connect(host=HOST_DB, port=28015, db="posedee")
-        
-        result = r.table("logs_rt_daily").filter(
-                              (r.row["userId"] == userId) # & (r.row["Timestamp"].match("^2022-04-13.*$")) # test
-                          ).pluck("torso_inclination", "neck_inclination").map(lambda doc: {
-                            "total_torso": doc["torso_inclination"],
-                            "total_neck": doc["neck_inclination"],
-                            "count": 1
-                          }).reduce(lambda left, right: {
-                            "total_torso": (left["total_torso"] + right["total_torso"]),
-                            "total_neck": (left["total_neck"] + right["total_neck"]),
-                            "count": (left["count"] + right["count"])
-                          }).do(lambda res: {
-                            "avg_torso": (res["total_torso"] / res["count"]),
-                            "avg_neck": (res["total_neck"] / res["count"]),
-                            "total_count": res["count"]  
-                          }).run(conn)
-            
+
+        result = (
+            r.table("logs_rt_daily")
+            .filter(
+                (
+                    r.row["userId"] == userId
+                )  # & (r.row["Timestamp"].match("^2022-04-13.*$")) # test
+            )
+            .pluck("torso_inclination", "neck_inclination")
+            .map(
+                lambda doc: {
+                    "total_torso": doc["torso_inclination"],
+                    "total_neck": doc["neck_inclination"],
+                    "count": 1,
+                }
+            )
+            .reduce(
+                lambda left, right: {
+                    "total_torso": (
+                        left["total_torso"] + right["total_torso"]
+                    ),
+                    "total_neck": (left["total_neck"] + right["total_neck"]),
+                    "count": (left["count"] + right["count"]),
+                }
+            )
+            .default({})
+            .do(
+                lambda res: {
+                    "avg_torso": float(0.00)
+                    if (res["count"] and res["total_torso"])
+                    else (res["total_torso"] / res["count"]),
+                    "avg_neck": float(0.00)
+                    if (res["count"] and res["total_neck"])
+                    else (res["total_neck"] / res["count"]),
+                    "total_count": 0 if res["count"] else (res["count"]),
+                }
+            )
+            .run(conn)
+        )
+
         # format -> data: {"avg_neck": 45.11833333333333, "avg_torso": 42.59166666666667, "total_count": 6}
         return Response(json.dumps(result), status=200, content_type="application/json")
     except RqlError as e:
