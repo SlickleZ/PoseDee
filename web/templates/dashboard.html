@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>My Posture Dashboards</title>
+        <meta charset="utf-8" />
+    </head>
+    <body onbeforeunload="closeEventSources()">
+        <h1 style="text-align: center"> Realtime Stat Simulator </h1>
+        <h3 style="text-align: center">Good/Bad Durations</h3>
+        <p style="text-align: center" id="myGoodDuration" width="400" height="400"></p>
+        <p style="text-align: center" id="myBadDuration" width="400" height="400"></p>
+        <h3 style="text-align: center" >Torso/Neck average angle</h3>
+        <p style="text-align: center" id="myTorsoAverage" width="400" height="400"></p>
+        <p style="text-align: center" id="myNeckAverage" width="400" height="400"></p>
+        <h3 style="text-align: center" >Bad posture cause</h3>
+        <p style="text-align: center" id="myCause" width="400" height="400"></p> 
+        <h1>Daily Stack Bar Chart</h1>
+        {{ fig1|safe }}
+        <h1>Weekly Stack Bar Chart</h1>
+        {{ fig2|safe }}
+        <h1>Monthly Stack Bar Chart</h1>
+        {{ fig3|safe }}
+        <h1>Yearly Stack Bar Chart</h1>
+        {{ fig4|safe }}
+        <h1>Daily Good Posture Percentage</h1>
+        {{ fig5|safe }}
+    </body>
+
+
+  <script>
+    function toFormat(totalSeconds) {
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      return `${hours.toString().padStart(2, '0')} hours ${minutes.toString().padStart(2, '0')} minutes ${seconds.toString().padStart(2, '0')} seconds`;
+    }
+  </script>  
+
+  <script>
+      var id = {{ userId | tojson }}; // ue781dzdc
+      var HOST_API = "18.140.3.143";
+
+      var goodSec = 0, badSec = 0;
+      var torsoAvg = 0.0, neckAvg = 0.0, avgTotalCount = 0;
+      var causeDoc = []
+
+      fetch("http://"+ HOST_API +":5000/api/request/progress/" + id)
+      .then((response) => response.json())
+      .then((doc) => {
+        goodSec = doc[1].Count;
+        badSec = doc[0].Count;
+        // console.log(goodSec, badSec);
+
+        document.getElementById('myGoodDuration').innerText = "Good: " + toFormat(goodSec);
+        document.getElementById('myBadDuration').innerText = "Bad: " + toFormat(badSec);
+      });
+
+      fetch("http://"+ HOST_API +":5000/api/request/average/" + id)
+      .then((response) => response.json())
+      .then((doc) => {
+        torsoAvg = doc.avg_torso;
+        neckAvg = doc.avg_neck;
+        avgTotalCount = doc.total_count;
+        // console.log(torsoAvg, neckAvg, avgTotalCount);
+
+        document.getElementById('myTorsoAverage').innerText = "Torso: " + torsoAvg.toFixed(2);
+        document.getElementById('myNeckAverage').innerText = "Neck: " + neckAvg.toFixed(2);
+      });
+
+      fetch("http://"+ HOST_API +":5000/api/request/cause/" + id)
+      .then((response) => response.json())
+      .then((doc) => {
+        causeDoc = doc;
+        // console.log(causeDoc)
+
+        document.getElementById('myCause').innerText = causeDoc.reduce((left, right) => left.count > right.count? left : right).cause;
+      });
+  </script>
+
+  <script>
+      var baseProgressUrl = "http://"+ HOST_API +":5000/api/realtime/progress/" + id;
+      if (!!window.EventSource) {
+        var progressDurationSource = new EventSource(baseProgressUrl);
+
+        progressDurationSource.onmessage = function(e) {
+          var ojson = e.data.replace(/\n/g, "").replace(/'/g, "\"");
+          let doc = JSON.parse(ojson);
+
+          // console.log(doc);
+          if (doc.new_val.Posture === 1) {
+            goodSec++;
+            document.getElementById('myGoodDuration').innerText = "Good: " + toFormat(goodSec);
+          } else if (doc.new_val.Posture === 0) {
+            badSec++;
+            document.getElementById('myBadDuration').innerText = "Bad: " + toFormat(badSec);
+          }
+        }
+      }
+  </script>
+
+  <script>
+      var baseAVGUrl = "http://"+ HOST_API +":5000/api/realtime/average/" + id;
+      if (!!window.EventSource) {
+        var postureAVGSource = new EventSource(baseAVGUrl);
+
+        postureAVGSource.onmessage = function(e) {
+          var ojson = e.data.replace(/\n/g, "").replace(/'/g, "\"");
+          let doc = JSON.parse(ojson);
+
+          // console.log(doc);
+          let newTorsoData = doc.new_val.torso_inclination;
+          let newNeckData = doc.new_val.neck_inclination;
+          
+          // console.log(torsoAvg, neckAvg, avgTotalCount);
+          torsoAvg = ((torsoAvg * avgTotalCount) + newTorsoData) / (avgTotalCount + 1);
+          neckAvg = ((neckAvg * avgTotalCount) + newNeckData) / (avgTotalCount + 1);
+          avgTotalCount++;
+
+          // console.log(torsoAvg, neckAvg, avgTotalCount);
+  
+          document.getElementById('myTorsoAverage').innerText = "Torso: " + torsoAvg.toFixed(2);
+          document.getElementById('myNeckAverage').innerText = "Neck: " + neckAvg.toFixed(2);
+
+        }
+      }
+  </script>
+
+  <script>
+      var baseCauseUrl = "http://"+ HOST_API +":5000/api/realtime/cause/" + id;
+      if (!!window.EventSource) {
+        var postureCauseSource = new EventSource(baseCauseUrl);
+
+        postureCauseSource.onmessage = function(e) {
+          var ojson = e.data.replace(/\n/g, "").replace(/'/g, "\"");
+          let doc = JSON.parse(ojson);
+
+          // console.log(doc);
+          for (i = 0; i < causeDoc.length; i++) {
+            if (causeDoc[i]["cause"] === doc.new_val.why_bad) {
+              causeDoc[i].count++;
+              break;
+            }
+          }
+          // console.log(causeDoc);
+          document.getElementById('myCause').innerText = causeDoc.reduce((left, right) => left.count > right.count? left : right).cause;
+        }
+      }
+  </script>
+
+  <script>
+    function closeEventSources() {
+      progressDurationSource.close();
+      postureAVGSource.close();
+      postureCauseSource.close();
+    }
+  </script>  
+
+</html>

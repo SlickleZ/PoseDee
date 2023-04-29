@@ -14,6 +14,10 @@ import pyttsx3
 import threading
 import os
 import datetime
+import pandas as pd
+import numpy as np
+import plotly.express as px 
+import plotly.graph_objects as go
 
 from flask import Response
 
@@ -344,6 +348,143 @@ def stop_camera():
         is_camera_running = False
         camera.release()
     return 'Camera stopped'
+
+# ====================================== Dashboard ======================================
+
+def daily_dash(userId):
+    r = requests.get(f'http://{HOST_API}:5000/api/dash/hourly/{userId}')
+    dash2 = pd.DataFrame(r.json(), columns=['Hour', 'Posture', 'Count'])
+    dash2 = dash2.astype(dtype={'Hour': "int64", 'Posture': "int64", 'Count': "float64"})
+
+    # Create a new dataframe with all 24 hours and null values for "Posture" and "Count"
+    df_all_hours = pd.DataFrame({'Hour': list(range(24)), 'Posture': [None] * 24, 'Count': [None] * 24})
+
+    # Merge the two dataframe using the "Hour" column as a key and keep all existing data
+    dash2 = pd.merge(df_all_hours, dash2, on='Hour', how='left')
+
+    dash2.drop(['Posture_x', 'Count_x'], axis=1, inplace=True)
+    dash2['Posture_y'] = dash2['Posture_y'].replace({0: 'n', 1: 'y'})
+
+    # Create the stack bar chart
+    # Set the colors for the stack bar chart
+    color_map = {"y": "Green", "n": "red"}
+    fig1 = px.bar(dash2, x='Hour', y='Count_y', color='Posture_y', barmode='stack', color_discrete_map=color_map)
+    fig1.update_layout(title='Daily Stack Bar Chart', xaxis_title='Hour', yaxis_title='Minitues'
+                    ,xaxis_tickmode='linear',xaxis_range=[-0.5, 23.7], yaxis_range=[0, 0.5], bargap= 0.9)
+    return fig1.to_html(full_html=False)
+
+
+# ====================================== WEEKLY DASHBOARD ======================================
+def weekly_dash(userId):
+    r = requests.get(f'http://{HOST_API}:5000/api/dash/weekly/{userId}')
+    dash3 = pd.DataFrame(r.json(), columns=['Day', 'Day_Name', 'Posture', 'Count'])
+    dash3 = dash3.astype(dtype={'Day': "int64", 'Day_Name': "object", 'Posture': "int64", 'Count': "float64"})
+
+    # Create a new dataframe with all 24 hours and null values for "Posture" and "Count"]
+    day_order = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    df_all_day = pd.DataFrame({'Day_Name': day_order, 'Posture': [None] * 7, 'Count': [None] * 7})
+    dash3 = pd.merge(df_all_day, dash3, on='Day_Name', how='left')
+    dash3.drop(['Posture_x', 'Count_x'], axis=1, inplace=True)
+    dash3['Posture_y'] = dash3['Posture_y'].replace({0: 'n', 1: 'y'})
+
+    # Create the stack bar chart
+    # Set the colors for the stack bar chart
+    color_map = {"y": "Green", "n": "red"}
+    fig2 = px.bar(dash3, x='Day_Name', y='Count_y', color='Posture_y', barmode='stack', color_discrete_map=color_map)
+    fig2.update_layout(title='Weekly Stack Bar Chart', xaxis_title='Day', yaxis_title='Minitues'
+                    ,xaxis_tickmode='linear', yaxis_range=[0, 0.002])
+    # Update the color_discrete_map to change the  colors of the posture categories
+    fig2.update_traces(marker_coloraxis=None)
+    return fig2.to_html(full_html=False)
+
+# ====================================== MONTHLY DASHBOARD ======================================
+
+def monthly_dash(userId):
+    r = requests.get(f'http://{HOST_API}:5000/api/dash/monthly/{userId}')
+    dash4 =  pd.DataFrame(r.json(), columns=['Day', 'Posture', 'Count'])
+    dash4 = dash4.astype(dtype={'Day': "int64", 'Posture': "int64", 'Count': "float64"})
+
+    week_order = dash4['Day'].unique().tolist()
+    df_all_week = pd.DataFrame({'Day': week_order, 'Posture': [None] * len(week_order), 'Count': [None] * len(week_order)})
+    dash4 = pd.merge(df_all_week, dash4, on='Day', how='left')
+    dash4.drop(['Posture_x', 'Count_x'], axis=1, inplace=True)
+    dash4['Posture_y'] = dash4['Posture_y'].replace({0: 'n', 1: 'y'})
+
+    # Create the stack bar chart
+    # Set the colors for the stack bar chart
+    color_map = {"y": "Green", "n": "red"}
+    fig3 = px.bar(dash4, x='Day', y='Count_y', color='Posture_y', barmode='stack', color_discrete_map=color_map)
+    fig3.update_layout(title='Monthly Stack Bar Chart', xaxis_title='Week', yaxis_title='Hour',xaxis_tickmode='linear', xaxis_tick0=0, yaxis_range=[0, 0.005])
+    # Update the color_discrete_map to change the colors of the posture categories
+    fig3.update_traces(marker_coloraxis=None)
+    return fig3.to_html(full_html=False)
+
+# ====================================== YEARLY DASHBOARD ======================================
+
+def yearly_dash(userId):
+    r = requests.get(f'http://{HOST_API}:5000/api/dash/yearly/{userId}')
+    dash5 =  pd.DataFrame(r.json(), columns=['Month', 'Posture', 'Count'])
+    dash5 = dash5.astype(dtype={'Month': "int64", 'Posture': "int64", 'Count': "float64"})
+
+    months_order = [1,2,3,4,5,6,7,8,9,10,11,12]
+    df_all_month = pd.DataFrame({'Month': months_order, 'Posture': [None] * 12, 'Count': [None] * 12})
+    dash5 = pd.merge(df_all_month, dash5, on='Month', how='left')
+    dash5.drop(['Posture_x', 'Count_x'], axis=1, inplace=True)
+
+    months_map = {1:"January", 2:"February", 3:"March", 4:"April", 5:"May", 6:"June", 7:"July", 8:"August", 9:"September", 10:"October", 11:"November", 12:"December"}
+    dash5['Month'] = dash5['Month'].replace(months_map)
+    dash5['Posture_y'] = dash5['Posture_y'].replace({0: 'n', 1: 'y'})
+
+    # Set the colors for the stack bar chart
+    color_map = {"y": "Green", "n": "red"}
+    fig4 = px.bar(dash5, x='Month', y='Count_y', color='Posture_y', barmode='stack', color_discrete_map=color_map)
+    fig4.update_layout(title='Yearly Stack Bar Chart', xaxis_title='Week', yaxis_title='Hour',xaxis_tickmode='linear', xaxis_tick0=0, yaxis_range=[0, 0.00005])
+    # Update the color_discrete_map to change the colors of the posture categories
+    fig4.update_traces(marker_coloraxis=None)
+    return fig4.to_html(full_html=False)
+
+# ====================================== GAUGE DASHBOARD ======================================
+
+def gauge_dash(userId):
+    r = requests.get(f'http://{HOST_API}:5000/api/dash/gauge/{userId}')
+    dash6 =  pd.DataFrame(r.json(), columns=['Posture', 'Count'])
+    dash6 = dash6.astype(dtype={'Posture': "int64", 'Count': "int64"})
+
+    good = int(dash6[dash6["Posture"] == 1]["Count"])
+    bad = int(dash6[dash6["Posture"] == 0]["Count"])
+    Good_Percentage =  round((good / (good + bad)) * 100, 2)
+
+    if Good_Percentage <= 30:
+        color = 'red'
+    elif Good_Percentage >= 30 and Good_Percentage < 60:
+        color = 'orange'
+    else:
+        color = 'green'
+
+    fig5 = go.Figure(go.Indicator(
+        mode = "gauge+number",
+        value = Good_Percentage,
+        title = {'text': "Daily Good Posture Percentage"},
+        domain = {'x': [0, 1], 'y': [0, 1]},
+        gauge = {
+            'axis': {'range': [None, 100]},
+            'threshold': {
+                'value': 30,'line': {'color': color, 'width': 5},
+            },
+            'threshold': {
+                'value': 59,'line': {'color': color, 'width': 5},
+            },
+            'threshold': {
+                'value': 60,'line': {'color': color, 'width': 5},
+            },
+            'bar': {'color': color}
+        }
+    ))
+    return fig5.to_html(full_html=False)
+
+@app.route('/dashboard/<userIdDashboard>')
+def dashboardPage(userIdDashboard):
+    return render_template('dashboard.html', userId=userIdDashboard, fig1=daily_dash(userIdDashboard), fig2=weekly_dash(userIdDashboard), fig3=monthly_dash(userIdDashboard), fig4=yearly_dash(userIdDashboard), fig5=gauge_dash(userIdDashboard))
 
 if __name__ == '__main__':
     app.run(debug=False)
