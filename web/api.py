@@ -490,4 +490,4 @@ def dashboardPage(userIdDashboard):
     return render_template('dashboard.html', host=HOST_API, userId=userIdDashboard, fig1=daily_dash(userIdDashboard), fig2=weekly_dash(userIdDashboard), fig3=monthly_dash(userIdDashboard), fig4=yearly_dash(userIdDashboard), fig5=gauge_dash(userIdDashboard))
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(host='0.0.0.0')
