@@ -27,7 +27,7 @@ app = Flask(__name__)
 app.secret_key = "-.SHEPHERD.-"  #it is necessary to set a password when dealing with OAuth 2.0
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"  #this is to set our environment to https because OAuth 2.0 only supports https environments
 
-GOOGLE_CLIENT_ID = "341516343925-hec8ev3qr9832gpsqct5cu31ganslqf3.apps.googleusercontent.com"  #enter your client id you got from Google console
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")  #enter your client id you got from Google console
 client_secrets_file = os.path.join(pathlib.Path(__file__).parent, "client_secret.json")  #set the path to where the .json file you got Google console is
 
 flow = Flow.from_client_secrets_file(  #Flow is OAuth 2.0 a class that stores all the information on how we want to authorize our users
@@ -487,7 +487,7 @@ def gauge_dash(userId):
 
 @app.route('/dashboard/<userIdDashboard>')
 def dashboardPage(userIdDashboard):
-    return render_template('dashboard.html', userId=userIdDashboard, fig1=daily_dash(userIdDashboard), fig2=weekly_dash(userIdDashboard), fig3=monthly_dash(userIdDashboard), fig4=yearly_dash(userIdDashboard), fig5=gauge_dash(userIdDashboard))
+    return render_template('dashboard.html', host=HOST_API, userId=userIdDashboard, fig1=daily_dash(userIdDashboard), fig2=weekly_dash(userIdDashboard), fig3=monthly_dash(userIdDashboard), fig4=yearly_dash(userIdDashboard), fig5=gauge_dash(userIdDashboard))
 
 if __name__ == '__main__':
     app.run(debug=False)

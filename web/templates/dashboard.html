@@ -82,7 +82,7 @@
 
   <script>
       var id = {{ userId | tojson }};
-      var HOST_API = "54.254.148.80";
+      var HOST_API = {{ host | tojson }};
 
       var goodSec = 0, badSec = 0;
       var torsoAvg = 0.0, neckAvg = 0.0, avgTotalCount = 0;
