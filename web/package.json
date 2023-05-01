@@ -23,8 +23,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "PORT=3001 HOST=0.0.0.0 react-scripts start",
-    "start-api": "FLASK_APP=api.py python3 api.py",
+    "start": "react-scripts start",
+    "start-api": "python api.py",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "test-api": "flask test",

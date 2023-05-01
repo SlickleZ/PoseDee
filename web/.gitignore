@@ -9,3 +9,5 @@ package-lock.json
 
 /__pycache__
 .DS_Store
+
+client_secret.json

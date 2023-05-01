@@ -367,10 +367,11 @@ def daily_dash(userId):
 
     # Create the stack bar chart
     # Set the colors for the stack bar chart
-    color_map = {"y": "Green", "n": "red"}
+    color_map = {"y": "#64E291", "n": "#EB7070"}
     fig1 = px.bar(dash2, x='Hour', y='Count_y', color='Posture_y', barmode='stack', color_discrete_map=color_map)
-    fig1.update_layout(title='Daily Stack Bar Chart', xaxis_title='Hour', yaxis_title='Minitues'
-                    ,xaxis_tickmode='linear',xaxis_range=[-0.5, 23.7], yaxis_range=[0, 0.5], bargap= 0.9)
+    fig1.update_layout(xaxis_title='Hour', yaxis_title='Minutes'
+                    ,xaxis_tickmode='linear',xaxis_range=[-0.5, 23.7], yaxis_range=[0, 0.5], bargap=0.1)
+    fig1.for_each_trace(lambda trace: trace.update(name='Good' if trace.name == 'y' else 'Bad'))
     return fig1.to_html(full_html=False)
 
 
@@ -389,12 +390,13 @@ def weekly_dash(userId):
 
     # Create the stack bar chart
     # Set the colors for the stack bar chart
-    color_map = {"y": "Green", "n": "red"}
+    color_map = {"y": "#64E291", "n": "#EB7070"}
     fig2 = px.bar(dash3, x='Day_Name', y='Count_y', color='Posture_y', barmode='stack', color_discrete_map=color_map)
-    fig2.update_layout(title='Weekly Stack Bar Chart', xaxis_title='Day', yaxis_title='Minitues'
+    fig2.update_layout(xaxis_title='Day', yaxis_title='Minitues'
                     ,xaxis_tickmode='linear', yaxis_range=[0, 0.002])
     # Update the color_discrete_map to change the  colors of the posture categories
     fig2.update_traces(marker_coloraxis=None)
+    fig2.for_each_trace(lambda trace: trace.update(name='Good' if trace.name == 'y' else 'Bad'))
     return fig2.to_html(full_html=False)
 
 # ====================================== MONTHLY DASHBOARD ======================================
@@ -412,11 +414,12 @@ def monthly_dash(userId):
 
     # Create the stack bar chart
     # Set the colors for the stack bar chart
-    color_map = {"y": "Green", "n": "red"}
+    color_map = {"y": "#64E291", "n": "#EB7070"}
     fig3 = px.bar(dash4, x='Day', y='Count_y', color='Posture_y', barmode='stack', color_discrete_map=color_map)
-    fig3.update_layout(title='Monthly Stack Bar Chart', xaxis_title='Week', yaxis_title='Hour',xaxis_tickmode='linear', xaxis_tick0=0, yaxis_range=[0, 0.005])
+    fig3.update_layout(xaxis_title='Date', yaxis_title='Hour',xaxis_tickmode='linear', xaxis_tick0=0, yaxis_range=[0, 0.005], bargap=0.1)
     # Update the color_discrete_map to change the colors of the posture categories
     fig3.update_traces(marker_coloraxis=None)
+    fig3.for_each_trace(lambda trace: trace.update(name='Good' if trace.name == 'y' else 'Bad'))
     return fig3.to_html(full_html=False)
 
 # ====================================== YEARLY DASHBOARD ======================================
@@ -436,11 +439,12 @@ def yearly_dash(userId):
     dash5['Posture_y'] = dash5['Posture_y'].replace({0: 'n', 1: 'y'})
 
     # Set the colors for the stack bar chart
-    color_map = {"y": "Green", "n": "red"}
+    color_map = {"y": "#64E291", "n": "#EB7070"}
     fig4 = px.bar(dash5, x='Month', y='Count_y', color='Posture_y', barmode='stack', color_discrete_map=color_map)
-    fig4.update_layout(title='Yearly Stack Bar Chart', xaxis_title='Week', yaxis_title='Hour',xaxis_tickmode='linear', xaxis_tick0=0, yaxis_range=[0, 0.00005])
+    fig4.update_layout(xaxis_title='Month', yaxis_title='Hour',xaxis_tickmode='linear', xaxis_tick0=0, yaxis_range=[0, 0.00005], bargap=0.3)
     # Update the color_discrete_map to change the colors of the posture categories
     fig4.update_traces(marker_coloraxis=None)
+    fig4.for_each_trace(lambda trace: trace.update(name='Good' if trace.name == 'y' else 'Bad'))
     return fig4.to_html(full_html=False)
 
 # ====================================== GAUGE DASHBOARD ======================================
@@ -458,16 +462,15 @@ def gauge_dash(userId):
         Good_Percentage =  round((good / (good + bad)) * 100, 2)
 
     if Good_Percentage <= 30:
-        color = 'red'
+        color = '#EB7070'
     elif Good_Percentage >= 30 and Good_Percentage < 60:
-        color = 'orange'
+        color = '#FEC771'
     else:
-        color = 'green'
+        color = '#64E291'
 
     fig5 = go.Figure(go.Indicator(
         mode = "gauge+number",
         value = Good_Percentage,
-        title = {'text': "Daily Good Posture Percentage"},
         domain = {'x': [0, 1], 'y': [0, 1]},
         gauge = {
             'axis': {'range': [None, 100]},

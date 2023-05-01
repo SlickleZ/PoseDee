@@ -16,3 +16,4 @@ MOCK_DATA.json
 
 # ignore test file
 test.py
+client_secret.json
