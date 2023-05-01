@@ -90,7 +90,7 @@ def callback():
     requests.post(f"http://{HOST_API}:5000/api/users", json=body, headers=headers)
 
     # เพื่อเปลี่ยนเเปลงค่า proxy ของเว็ปให้เป็นฝั่ง client จาก server
-    return redirect(f"http://localhost:3001/callback?name={session['name']}&email={session['email']}&picture={session['picture']}&userId={session['google_id']}")  #the final page where the authorized users will end up
+    return redirect(f"http://localhost:3001/authen?name={session['name']}&email={session['email']}&picture={session['picture']}&userId={session['google_id']}")  #the final page where the authorized users will end up
 
 @app.route("/logout")  #the logout page and function
 def logout():

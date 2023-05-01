@@ -29,7 +29,7 @@ const router = createBrowserRouter([
     path: "/app", element: <App/>
   },
   {
-    path: "/callback", element: <Callback/>
+    path: "/authen", element: <Callback/>
   },
   {
     path: "/track", element: <CameraPage/>
