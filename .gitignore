@@ -1,0 +1,19 @@
+# ignore ALL .log files
+*.log
+
+# ignore ALL files in ANY directory named temp
+temp/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+.DS_Store
+
+# Distribution / packaging
+node_modules/
+
+# Ignore mock data file
+MOCK_DATA.json
+
+# ignore test file
+test.py
+./web/client_secret.json

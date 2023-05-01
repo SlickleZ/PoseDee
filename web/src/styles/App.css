@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Inter:wght@400;500;600;700;800;900&display=fallback');
+
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+
+/* Additional styles */
+@import 'additional-styles/utility-patterns.css';
+@import 'additional-styles/range-slider.css';
+@import 'additional-styles/toggle-switch.css';
+@import 'additional-styles/theme.css';
+
+@import 'tailwindcss/utilities';
+
+/* Additional Tailwind directives: https://tailwindcss.com/docs/functions-and-directives/#responsive */
+/* @layer utilities {
+    .rtl {
+        direction: rtl;
+    }
+} */
+
+/* See Alpine.js: https://github.com/alpinejs/alpine#x-cloak */
+/* [x-cloak=""] {
+    display: none;
+} */
+
+/* .App {
+  text-align: center;
+  background-color: #f3f4f6;
+} */
+
+body {
+  /* text-align: center; */
+  /* background-color: #f3f4f6;  */
+  background-color:  #f5f5f7;
+  color: #164e63;
+}
+
+/* .camera-container {
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+  margin: 0 auto;
+
+} */
+
+.myClickable {
+  cursor: pointer;
+}
+
+.camera-container {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.camera-off {
+  width: 100%; /* set width to 100% to make it responsive */
+  max-width: 780px; /* set max-width */
+  height: 442.25px; /* set max-height */
+  background-color: #ECECEC;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.App-header {
+  background-color: #f3f4f6;
+  /* min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin); */
+  /* color: #164e63; */
+}
+
+.App-link {
+  color: #61dafb;
+}
+/* Wave hand animation */
+.wave {
+  animation-name: wave-animation;  /* Refers to the name of your @keyframes element below */
+  animation-duration: 2.5s;        /* Change to speed up or slow down */
+  animation-iteration-count: infinite;  /* Never stop waving :) */
+  transform-origin: 70% 70%;       /* Pivot around the bottom-left palm */
+  display: inline-block;
+}
+
+@keyframes wave-animation {
+    0% { transform: rotate( 0.0deg) }
+   10% { transform: rotate(14.0deg) }  /* The following five values can be played with to make the waving more or less extreme */
+   20% { transform: rotate(-8.0deg) }
+   30% { transform: rotate(14.0deg) }
+   40% { transform: rotate(-4.0deg) }
+   50% { transform: rotate(10.0deg) }
+   60% { transform: rotate( 0.0deg) }  /* Reset for the last half to pause */
+  100% { transform: rotate( 0.0deg) }
+}
+
+/*  */
+

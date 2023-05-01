@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>PoseDee | Posture Overviews</title>
+  <link rel="icon" href="https://cdn4.iconfinder.com/data/icons/essentials-74/24/018_-_Chart-1024.png">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <style>
+    body {
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+      background-color:  #FFFFFF;
+      color: #164e63;
+    }
+
+    .form-control-primary {
+      margin: 10px;
+      opacity: 0.2;
+      border-radius: 2px;
+    }
+
+    main {
+      padding-top: 90px;
+    }
+
+    .sidebar {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      top: 0;
+      z-index: 100;
+      padding: 70px 0 0 10px;
+      border-right: 1px solid #d3d3d3;
+    }
+
+    .left-sidebar {
+      position: sticky;
+      top: 0;
+      height: calc(100vh - 70px)
+    }
+
+    .sidebar-nav li .nav-link {
+      color: #333;
+      font-weight: 500;
+    }
+
+    .navbar {
+      background-color: #1F2937;
+    }
+
+    #loader {
+      display: block;
+      position: fixed;
+      z-index: 999;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #fff;
+      opacity: 0.8;
+    }
+
+    #loader .spinner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border: 16px solid #f3f3f3;
+      border-top: 16px solid #3498db;
+      border-radius: 50%;
+      width: 80px;
+      height: 80px;
+      animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body class="container" onbeforeunload="closeEventSources()">
+  <div id="loader">
+    <div class="spinner"></div>
+  </div>
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+    integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+    crossorigin="anonymous"></script>
+  <!--navbar-->
+  <nav class="navbar navbar-dark fixed-top flex-md-nowrap p-2 shadow">
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0 p-2 text-xl font-bold text-gray-300 uppercase" href="#">Posture
+      Overviews</a>
+    <ul class="navbar-nav px-3">
+      <li class="nav-item text-nowrap">
+        <a class="nav-link " href="#" onclick="window.close()">Back</a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- container -->
+  <!-- <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-2 bg-secondary d-none d-md-block sidebar">
+        <div class="left-sidebar">
+          <ul class="nav flex-column sidebar-nav">
+            <li class="nav-item">
+              <a class="nav-link active" href="#graph1">
+                Candidates
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#graph2">
+                Jobs
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#graph3">
+                Orders
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#graph4">
+                Invoices
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#graph5">
+                Reports
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>  -->
+
+      <!--Main content-->
+      <br>
+      <main role="main" class="col justify-content-md-cente" data-aos="fade-left" data-aos-delay="250" data-aos-duration="4000">
+        <h1 style="text-align: start " class="text-4xl font-bold text-gray-800 uppercase">Your Performance Insights</h1>
+        <br><br>
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="card">
+              <div class="card-body">
+                <h2 class="card-title text-xl font-bold ">Good and Bad Posture Time</h2>
+                <p class="card-text" id="myGoodDuration" width="500" height="500"></p>
+                <p class="card-text" id="myBadDuration" width="500" height="500"></p>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="card">
+              <div class="card-body">
+                <h2 class="card-title text-xl font-bold">Average Neck and Torso Inclination</h2>
+                <p class="card-text" id="myTorsoAverage" width="500" height="500"></p>
+                <p class="card-text" id="myNeckAverage" width="500" height="500"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br><br>
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="card">
+              <div class="card-body">
+                <h2 class="card-title text-xl font-bold">Primary Cause of Poor Posture</h2>
+                <p class="card-text" id="myCause" width="500" height="500"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="graph">
+          <div class="mt-5 pt-1" data-aos="fade-up" data-aos-delay="250" data-aos-duration="4000" id="graph1">
+            <h1 class="text-4xl font-bold text-gray-800 uppercase">Daily Proportion of Good Posture</h1>
+            {{ fig5|safe }}
+          </div>
+          <div class="mt-3 pt-1" data-aos="fade-up" data-aos-delay="250" data-aos-duration="4000" id="graph2">
+            <!-- <br><br><br><br> -->
+            <h1 class="text-4xl font-bold text-gray-800 uppercase">Daily Posture Progression</h1>
+            {{ fig1|safe }}
+          </div>
+          <div class="mt-3 pt-1" data-aos="fade-up" data-aos-delay="250" data-aos-duration="4000" id="graph3">
+            <!-- <br><br><br><br> -->
+            <h1 class="text-4xl font-bold text-gray-800 uppercase">Weekly Posture Progression</h1>
+            {{ fig2|safe }}
+          </div>
+          <div class="mt-3 pt-1" data-aos="fade-up" data-aos-delay="250" data-aos-duration="4000" id="graph4">
+            <!-- <br><br><br><br> -->
+            <h1 class="text-4xl font-bold text-gray-800 uppercase">Monthly Posture Progression</h1>
+            {{ fig3|safe }}
+          </div>
+          <div class="mt-3 pt-1" data-aos="fade-up" data-aos-delay="250" data-aos-duration="4000" id="graph5">
+            <!-- <br><br><br><br> -->
+            <h1 class="text-4xl font-bold text-gray-800 uppercase">Yearly Posture Progression</h1>
+            {{ fig4|safe }}
+          </div>
+          <!-- <br><br><br><br><br><br> -->
+        </div>
+      </main>
+    </div>
+  </div>
+  <script>
+    AOS.init();
+    // Hide the loader after the page has finished loading
+    window.addEventListener('load', function () {
+      document.getElementById('loader').style.display = "none";
+    });
+  </script>
+</body>
+
+
+<script>
+  function toFormat(totalSeconds) {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${hours.toString().padStart(2, '0')} hours ${minutes.toString().padStart(2, '0')} minutes ${seconds.toString().padStart(2, '0')} seconds`;
+  }
+</script>
+
+<script>
+  var id = {{ userId | tojson }};
+  var HOST_API = {{ host | tojson }};
+
+  var goodSec = 0, badSec = 0;
+  var torsoAvg = 0.0, neckAvg = 0.0, avgTotalCount = 0;
+  var causeDoc = []
+
+  fetch("http://" + HOST_API + ":5000/api/request/progress/" + id)
+    .then((response) => response.json())
+    .then((doc) => {
+      if (doc.length === 0) {
+        goodSec = 0;
+        badSec = 0;
+      } else {
+        goodSec = doc[1].Count;
+        badSec = doc[0].Count;
+      }
+
+      // console.log(goodSec, badSec);
+
+      document.getElementById('myGoodDuration').innerText = "Good: " + toFormat(goodSec);
+      document.getElementById('myBadDuration').innerText = "Bad: " + toFormat(badSec);
+    });
+
+  fetch("http://" + HOST_API + ":5000/api/request/average/" + id)
+    .then((response) => response.json())
+    .then((doc) => {
+      torsoAvg = doc.avg_torso;
+      neckAvg = doc.avg_neck;
+      avgTotalCount = doc.total_count;
+
+      // console.log(torsoAvg, neckAvg, avgTotalCount);
+
+      document.getElementById('myTorsoAverage').innerText = "Torso: " + torsoAvg.toFixed(2);
+      document.getElementById('myNeckAverage').innerText = "Neck: " + neckAvg.toFixed(2);
+    });
+
+  fetch("http://" + HOST_API + ":5000/api/request/cause/" + id)
+    .then((response) => response.json())
+    .then((doc) => {
+      if (doc.length === 0) {
+        causeDoc = [{ "cause": null, "count": 0 }, { "cause": "both", "count": 0 }, { "cause": "neck", "count": 0 }, { "cause": "torso", "count": 0 }]
+      } else {
+        causeDoc = doc;
+      }
+
+      // console.log(causeDoc)
+
+      let significantCause = causeDoc.reduce((left, right) => left.count > right.count ? left : right);
+      if (significantCause.cause === null || significantCause.count === 0) {
+        document.getElementById('myCause').innerText = "No significant problems detected.";
+      } else {
+        document.getElementById('myCause').innerText = significantCause.cause.charAt(0).toUpperCase() + significantCause.cause.slice(1);
+      }
+
+    });
+</script>
+
+<script>
+  var baseProgressUrl = "http://" + HOST_API + ":5000/api/realtime/progress/" + id;
+  if (!!window.EventSource) {
+    var progressDurationSource = new EventSource(baseProgressUrl);
+
+    progressDurationSource.onmessage = function (e) {
+      var ojson = e.data.replace(/\n/g, "").replace(/'/g, "\"");
+      let doc = JSON.parse(ojson);
+
+      // console.log(doc);
+      if (doc.new_val.Posture === 1) {
+        goodSec++;
+        document.getElementById('myGoodDuration').innerText = "Good: " + toFormat(goodSec);
+      } else if (doc.new_val.Posture === 0) {
+        badSec++;
+        document.getElementById('myBadDuration').innerText = "Bad: " + toFormat(badSec);
+      }
+    }
+  }
+</script>
+
+<script>
+  var baseAVGUrl = "http://" + HOST_API + ":5000/api/realtime/average/" + id;
+  if (!!window.EventSource) {
+    var postureAVGSource = new EventSource(baseAVGUrl);
+
+    postureAVGSource.onmessage = function (e) {
+      var ojson = e.data.replace(/\n/g, "").replace(/'/g, "\"");
+      let doc = JSON.parse(ojson);
+
+      // console.log(doc);
+      let newTorsoData = doc.new_val.torso_inclination;
+      let newNeckData = doc.new_val.neck_inclination;
+
+      // console.log(torsoAvg, neckAvg, avgTotalCount);
+      torsoAvg = ((torsoAvg * avgTotalCount) + newTorsoData) / (avgTotalCount + 1);
+      neckAvg = ((neckAvg * avgTotalCount) + newNeckData) / (avgTotalCount + 1);
+      avgTotalCount++;
+
+      // console.log(torsoAvg, neckAvg, avgTotalCount);
+
+      document.getElementById('myTorsoAverage').innerText = "Torso: " + torsoAvg.toFixed(2);
+      document.getElementById('myNeckAverage').innerText = "Neck: " + neckAvg.toFixed(2);
+
+    }
+  }
+</script>
+
+<script>
+  var baseCauseUrl = "http://" + HOST_API + ":5000/api/realtime/cause/" + id;
+  if (!!window.EventSource) {
+    var postureCauseSource = new EventSource(baseCauseUrl);
+
+    postureCauseSource.onmessage = function (e) {
+      var ojson = e.data.replace(/\n/g, "").replace(/'/g, "\"");
+      let doc = JSON.parse(ojson);
+
+      // console.log(doc);
+      for (i = 0; i < causeDoc.length; i++) {
+        if (causeDoc[i]["cause"] === doc.new_val.why_bad) {
+          causeDoc[i].count++;
+          break;
+        }
+      }
+      // console.log(causeDoc);
+      let significantCause = causeDoc.reduce((left, right) => left.count > right.count ? left : right);
+      if (significantCause.cause === null || significantCause.count === 0) {
+        document.getElementById('myCause').innerText = "No significant problems detected.";
+      } else {
+        document.getElementById('myCause').innerText = significantCause.cause.charAt(0).toUpperCase() + significantCause.cause.slice(1);
+      }
+    }
+  }
+</script>
+
+<script>
+  function closeEventSources() {
+    progressDurationSource.close();
+    postureAVGSource.close();
+    postureCauseSource.close();
+  }
+</script>
+
+</html>
