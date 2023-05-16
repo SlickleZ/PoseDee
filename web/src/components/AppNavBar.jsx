@@ -17,7 +17,6 @@ export default function AppNavBar() {
     const initialState = [
       { name: "Tracking System", href: "/track", current: true },
       { name: "FAQ", href: "/faq", current: false },
-      { name: "Posture Overviews", href: "#", current: false},
       { name: "Our Approach", href: "#", current: false},
     ];
   
@@ -31,11 +30,11 @@ export default function AppNavBar() {
     }, [navigation]);
   
     const handleClick = (index) => {
+      // if (index === 3) {
+      //   window.open("https://github.com/SlickleZ/");
+      //   return; // do nothing if index 2 is clicked
+      // }
       if (index === 2) {
-        window.open("https://github.com/SlickleZ/");
-        return; // do nothing if index 2 is clicked
-      }
-      if (index === 3) {
         window.open("https://github.com/SlickleZ/PoseDee");
         return; // do nothing if index 3 is clicked
       }
